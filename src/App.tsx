@@ -61,8 +61,8 @@ const productData: Record<TabKey, ProductEntry> = {
     name: 'PEPTIVA',
     size: '30ml',
     price: '25€',
-    rating: 0,
-    reviews: 0,
+    rating: 4.8,
+    reviews: 2367,
     benefits: [
       'Λειαίνει το μεσόφρυο & απαλύνει το πόδι της χήνας',
       'Μειώνει σακούλες & μαύρους κύκλους που κουράζουν το βλέμμα',
@@ -75,8 +75,8 @@ const productData: Record<TabKey, ProductEntry> = {
     name: 'BBLISE',
     size: '50ml',
     price: '25€',
-    rating: 0,
-    reviews: 0,
+    rating: 4.8,
+    reviews: 1530,
     benefits: [
       'Προσφέρει φυσική κάλυψη και ομοιόμορφο τόνο στην επιδερμίδα',
       'Ενυδατώνει βαθιά και χαρίζει δροσιά που διαρκεί όλη μέρα',
