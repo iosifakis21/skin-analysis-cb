@@ -57,6 +57,7 @@ const productData: Record<TabKey, ProductEntry> = {
     name: 'LINEOVA', size: '50ml', price: '39€', rating: 4.6, reviews: 156,
     benefits: ['Μειώνει κηλίδες & ανομοιομορφίες', 'Ξαναζωντανεύει το περίγραμμα', 'Φυσικά ελληνικά εκχυλίσματα'],
     url: 'https://constantinebeauty.gr/products/lineova-facial-contour-cream',
+    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCKmTX2i0oJiaIxVRUYmetTzqA29y7w8CObGg1',
   },
 };
 
