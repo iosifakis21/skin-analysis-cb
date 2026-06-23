@@ -25,39 +25,79 @@ const mockResults = {
 
 type ProductEntry = {
   name: string; size: string; price: string; rating: number; reviews: number;
-  benefits: string[]; url: string; image?: string;
+  benefits: string[]; url: string; image: string;
 };
 
 const productData: Record<TabKey, ProductEntry> = {
   pores: {
-    name: 'MASTIQUE', size: '50ml', price: '25€', rating: 4.8, reviews: 234,
-    benefits: ['Αναπλάθει με μαστιχέλαιο & βούτυρο καριτέ', 'Σφίγγει τους πόρους άμεσα', 'Ενυδατώνει εις βάθος'],
-    url: 'https://constantinebeauty.gr/products/mastic-oil-facial-rejuvenation-cream',
-    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCPkWu3fJBbHkjG4dmn6a1TFURpuQXwrOLv3iI',
+    name: 'AETHER',
+    size: '50ml',
+    price: '29€',
+    rating: 4.8,
+    reviews: 1832,
+    benefits: [
+      'Εξισορροπεί το λιπαρό δέρμα χωρίς να το ξεραίνει',
+      'Βελτιώνει ορατά την υφή και ελαχιστοποιεί τους πόρους',
+      'Καταπραΰνει και ανανεώνει την κατεστραμμένη επιδερμίδα',
+    ],
+    url: 'https://constantinebeauty.gr/products/aether-face-cream',
+    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVC8jzi4JuBuzK2lRNEWasfkOcy4p6g0TMqDV1Z',
   },
   wrinkles: {
-    name: 'LIFTGLOW', size: '50ml', price: '49€', rating: 4.7, reviews: 189,
-    benefits: ['Αντιρυτιδική δράση σε 4 εβδομάδες', 'Lifting αποτέλεσμα', 'Φυσικά ελληνικά συστατικά'],
-    url: 'https://constantinebeauty.gr/products/liftglow-anti-wrinkle-cream',
-    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCXARfPP62BNjRwWc0DzthKlkvpG7aYxOnFryb',
-  },
-  dark_circles: {
-    name: 'MELIZIA', size: '15ml', price: '35€', rating: 4.8, reviews: 312,
-    benefits: ['Μειώνει μαύρους κύκλους με πρόπολη', 'Φωτίζει την περιοχή των ματιών', 'Ελαφριά υφή γρήγορης απορρόφησης'],
-    url: 'https://constantinebeauty.gr/products/melizia-propolis-glow-eye-cream',
-    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCCVOrOmGQ5W7rXeT91R3hajFZ8xsgkq2oCMnD',
-  },
-  dehydration: {
-    name: 'HYDRANEA', size: '50ml', price: '45€', rating: 4.9, reviews: 421,
-    benefits: ['Βαθιά ενυδάτωση με βλαστοκύτταρα', 'Αντιγηραντική δράση με νιασιναμίδη', 'Ορατά αποτελέσματα σε 7 ημέρες'],
+    name: 'HYDRANEA',
+    size: '50ml',
+    price: '45€',
+    rating: 4.9,
+    reviews: 421,
+    benefits: [
+      'Βαθιά ενυδάτωση με βλαστοκύτταρα Ιαπωνικής Ορχιδέας',
+      'Αντιγηραντική δράση με νιασιναμίδη για ορατή μείωση ρυτίδων',
+      'Ορατά αποτελέσματα σε 7 ημέρες',
+    ],
     url: 'https://constantinebeauty.gr/products/hydranea-anti-aging-face-cream-with-stem-cells-niacinamide',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCAAS7KbYqQC0y6sv4a7w29ofDt1LmekcVdrhE',
   },
+  dark_circles: {
+    name: 'PEPTIVA',
+    size: '30ml',
+    price: '25€',
+    rating: 0,
+    reviews: 0,
+    benefits: [
+      'Λειαίνει το μεσόφρυο & απαλύνει το πόδι της χήνας',
+      'Μειώνει σακούλες & μαύρους κύκλους που κουράζουν το βλέμμα',
+      'Αποκαθιστά φωτεινό, σφριγηλό & ξεκούραστο βλέμμα',
+    ],
+    url: 'https://constantinebeauty.gr/products/peptiva-eye-cream',
+    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVC1qHYI82soUS7c3ADruwWEFRV014KZtp26OmQ',
+  },
+  dehydration: {
+    name: 'BBLISE',
+    size: '50ml',
+    price: '25€',
+    rating: 0,
+    reviews: 0,
+    benefits: [
+      'Προσφέρει φυσική κάλυψη και ομοιόμορφο τόνο στην επιδερμίδα',
+      'Ενυδατώνει βαθιά και χαρίζει δροσιά που διαρκεί όλη μέρα',
+      'Μειώνει την όψη των ρυτίδων και προσφέρει ορατή σύσφιξη',
+    ],
+    url: 'https://constantinebeauty.gr/products/bblise-cream-with-adjustable-coverage',
+    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCn8IOPIcWG1zXHYvFT9eRJtCU7SjkOWKi3qw0',
+  },
   dark_spots: {
-    name: 'LINEOVA', size: '50ml', price: '39€', rating: 4.6, reviews: 156,
-    benefits: ['Μειώνει κηλίδες & ανομοιομορφίες', 'Ξαναζωντανεύει το περίγραμμα', 'Φυσικά ελληνικά εκχυλίσματα'],
-    url: 'https://constantinebeauty.gr/products/lineova-facial-contour-cream',
-    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCKmTX2i0oJiaIxVRUYmetTzqA29y7w8CObGg1',
+    name: 'ELISHEVA',
+    size: '50ml',
+    price: '29€',
+    rating: 4.8,
+    reviews: 1832,
+    benefits: [
+      'Βελτιώνει ορατά τον τόνο & μειώνει τις δυσχρωμίες',
+      'Επαναφέρει τη φυσική λάμψη σε θαμπό, ανόμοιο δέρμα',
+      'Χαρίζει πιο λεία όψη & ομοιόμορφη υφή από τις πρώτες εβδομάδες',
+    ],
+    url: 'https://constantinebeauty.gr/products/elisheva-face-cream',
+    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCIaaLfQpIiabJK94o2U0QOXxNtR8HSkZghnBD',
   },
 };
 
@@ -1427,23 +1467,18 @@ function Screen5({
       <div style={{ background: 'white', border: '0.5px solid #DDD8D0', marginBottom: 0 }}>
 
         {/* 7a — Product image */}
-        <div style={{
-          width: '100%',
-          height: 280,
-          background: '#F5F0EB',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-          {product.image ? (
-            <img
-              src={product.image}
-              alt={product.name}
-              style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 16, boxSizing: 'border-box' }}
-            />
-          ) : (
-            <div style={{ width: '100%', height: '100%', background: '#F0EDE8' }} />
-          )}
+        <div style={{ width: '100%', height: 280, overflow: 'hidden' }}>
+          <img
+            src={product.image}
+            alt={product.name}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center center',
+              display: 'block',
+            }}
+          />
         </div>
 
         {/* 7b — Product info */}
@@ -1469,10 +1504,14 @@ function Screen5({
             {product.size}
           </span>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-            <span style={{ color: '#C8A96E', fontSize: 14 }}>★★★★★</span>
-            <span style={{ fontSize: 13, color: '#8B7355' }}>{product.rating} ({product.reviews})</span>
-          </div>
+          {product.rating > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+              <span style={{ color: '#C8A96E', fontSize: 14 }}>★★★★★</span>
+              <span style={{ fontSize: 13, color: '#8B7355' }}>
+                {product.rating} ({product.reviews.toLocaleString()})
+              </span>
+            </div>
+          )}
 
           <p style={{ fontSize: 18, fontWeight: 700, color: '#2C1F14', margin: '8px 0' }}>{product.price}</p>
 
@@ -1560,13 +1599,17 @@ function Screen5({
               >
                 <Heart size={18} color="#2C1F14" strokeWidth={1.5} />
               </button>
-              <div style={{ height: 180, background: '#F0EDE8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {rp.image ? (
-                  <img src={rp.image} alt={rp.name} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 8, boxSizing: 'border-box' }} />
-                ) : (
-                  <div style={{ width: '100%', height: '100%' }} />
-                )}
-              </div>
+              <img
+                src={rp.image}
+                alt={rp.name}
+                style={{
+                  width: '100%',
+                  height: 180,
+                  objectFit: 'cover',
+                  objectPosition: 'center center',
+                  display: 'block',
+                }}
+              />
               <p style={{ fontSize: 12, fontWeight: 700, color: '#2C1F14', padding: '8px 8px 4px', margin: 0, textTransform: 'uppercase', lineHeight: 1.3 }}>
                 {rp.name}
               </p>
