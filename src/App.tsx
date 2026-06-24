@@ -738,20 +738,16 @@ declare global {
 }
 
 function startHidingEnglishBadges(): () => void {
-  let badgeHidden = false;
   const id = window.setInterval(() => {
     const iframe = document.querySelector('#YMK-module iframe') as HTMLIFrameElement | null;
     if (!iframe) return;
     const iDoc = iframe.contentDocument || iframe.contentWindow?.document;
     if (!iDoc) return;
 
-    if (!badgeHidden) {
-      const badgeRow = iDoc.querySelector('div[style*="position: absolute"][style*="top: 40px"]') as HTMLElement | null;
-      if (badgeRow) {
-        badgeRow.style.visibility = 'hidden';
-        console.log('BadgeHide: found and hid badge row');
-        badgeHidden = true;
-      }
+    const badgeRow = iDoc.querySelector('div[style*="position: absolute"][style*="top: 40px"]') as HTMLElement | null;
+    if (badgeRow && badgeRow.style.visibility !== 'hidden') {
+      badgeRow.style.visibility = 'hidden';
+      console.log('BadgeHide: found and hid badge row');
     }
 
     const walker = iDoc.createTreeWalker(iDoc.body, NodeFilter.SHOW_ELEMENT);
@@ -918,6 +914,7 @@ function Screen4({ onCapture, onBack }: { onCapture: (dataUrl: string, landmarks
       capturedRef.current = true;
       setCaptured(true);
       stopHiding?.();
+      try { window.YMK.close(); } catch (_) { /* ignore */ }
       const base64 = capturedResult.images[0]?.image;
       if (base64) {
         onCapture(base64, null);
