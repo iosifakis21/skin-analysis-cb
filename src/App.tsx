@@ -845,7 +845,7 @@ function GreekCountdownOverlay({ allGood, captured }: { allGood: boolean; captur
       } else {
         setCount(current);
       }
-    }, 800);
+    }, 500);
     return () => window.clearInterval(tid);
   }, [allGood, captured]);
 
@@ -857,18 +857,24 @@ function GreekCountdownOverlay({ allGood, captured }: { allGood: boolean; captur
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
       zIndex: 61, pointerEvents: 'none', background: 'transparent',
     }}>
-      <span style={{ fontSize: 16, color: 'white', opacity: 0.9, background: 'transparent', textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
-        Λήψη φωτογραφίας σε
-      </span>
-      <span style={{
-        fontSize: 56, fontWeight: 700, color: 'white', lineHeight: 1.2,
-        textShadow: '0 2px 8px rgba(0,0,0,0.8)', background: 'transparent',
+      <div style={{
+        background: 'rgba(0, 0, 0, 0.35)', borderRadius: 16,
+        padding: '20px 36px', backdropFilter: 'blur(4px)',
+        textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center',
       }}>
-        {count}
-      </span>
-      <span style={{ fontSize: 14, color: 'white', opacity: 0.8, letterSpacing: '0.04em', background: 'transparent', textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
-        Μείνετε σταθεροί
-      </span>
+        <span style={{ fontSize: 16, color: 'white', opacity: 0.9, textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
+          Λήψη φωτογραφίας σε
+        </span>
+        <span style={{
+          fontSize: 56, fontWeight: 700, color: 'white', lineHeight: 1.2,
+          textShadow: '0 2px 8px rgba(0,0,0,0.8)',
+        }}>
+          {count}
+        </span>
+        <span style={{ fontSize: 14, color: 'white', opacity: 0.8, letterSpacing: '0.04em', textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
+          Μείνετε σταθεροί
+        </span>
+      </div>
     </div>
   );
 }
@@ -938,6 +944,7 @@ function Screen4({ onCapture, onBack }: { onCapture: (dataUrl: string, landmarks
             faceDetectionMode: 'skincare',
             imageFormat: 'base64',
             language: 'enu',
+            countingDuration: 500,
           });
           window.YMK.openCameraKit();
           window.YMK.addEventListener('faceDetectionCaptured', handleCapture);
@@ -1765,7 +1772,7 @@ export default function App() {
             <Screen3 onBack={() => navigate(2)} onNext={() => {
               console.log('YMK exists?', typeof window.YMK);
               try {
-                window.YMK.init({ faceDetectionMode: 'skincare', imageFormat: 'base64', language: 'enu' });
+                window.YMK.init({ faceDetectionMode: 'skincare', imageFormat: 'base64', language: 'enu', countingDuration: 500 });
                 console.log('YMK.init called successfully');
                 window.YMK.openCameraKit();
                 console.log('YMK.openCameraKit called successfully');
