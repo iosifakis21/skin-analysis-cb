@@ -738,55 +738,28 @@ declare global {
 }
 
 function startHidingEnglishBadges(): () => void {
+  let attempts = 0;
   const id = window.setInterval(() => {
+    attempts++;
     const iframe = document.querySelector('#YMK-module iframe') as HTMLIFrameElement | null;
-    if (!iframe) return;
+    if (!iframe) {
+      if (attempts >= 33) window.clearInterval(id);
+      return;
+    }
     const iDoc = iframe.contentDocument || iframe.contentWindow?.document;
-    if (!iDoc) return;
-
+    if (!iDoc) {
+      if (attempts >= 33) window.clearInterval(id);
+      return;
+    }
     const badgeRow = iDoc.querySelector('div[style*="position: absolute"][style*="top: 40px"]') as HTMLElement | null;
-    if (badgeRow && badgeRow.style.visibility !== 'hidden') {
+    if (badgeRow) {
       badgeRow.style.visibility = 'hidden';
       console.log('BadgeHide: found and hid badge row');
+      window.clearInterval(id);
+    } else {
+      console.log('BadgeHide: badge row not found yet');
+      if (attempts >= 33) window.clearInterval(id);
     }
-
-    const walker = iDoc.createTreeWalker(iDoc.body, NodeFilter.SHOW_ELEMENT);
-    let node: Node | null;
-    while ((node = walker.nextNode())) {
-      const el = node as HTMLElement;
-      const text = el.innerText?.trim();
-      if (!text) continue;
-      if (text.includes('Take photo in') || text.includes('Keep your head steady')) {
-        const target = el.closest('div') as HTMLElement | null;
-        if (target && target.style.visibility !== 'hidden') {
-          target.style.visibility = 'hidden';
-          console.log(`TextHide: hid ${text.includes('Take photo') ? 'countdown' : 'steady'} text`);
-        }
-      }
-    }
-
-    // Hide Camera Kit's dark countdown overlay while keeping the video visible.
-    // The SDK renders opaque overlay divs on top of the video during its capture phase.
-    const allEls = iDoc.querySelectorAll('div, canvas');
-    allEls.forEach((rawEl) => {
-      const el = rawEl as HTMLElement;
-      const cs = iDoc.defaultView?.getComputedStyle(el);
-      if (!cs) return;
-      const bg = cs.backgroundColor || '';
-      const pos = cs.position;
-      const w = el.offsetWidth;
-      const h = el.offsetHeight;
-      const isFullScreen = (pos === 'absolute' || pos === 'fixed') && w > 200 && h > 200;
-      const isDark = bg.includes('rgba(0') || bg === 'rgb(0, 0, 0)' || bg.includes('rgba(0, 0, 0');
-      if (isFullScreen && isDark && el.tagName !== 'VIDEO') {
-        const hasVideo = el.querySelector('video');
-        if (!hasVideo && el.dataset.ymkHidden !== '1') {
-          el.style.opacity = '0';
-          el.dataset.ymkHidden = '1';
-          console.log('DarkOverlayHide: hid dark overlay element');
-        }
-      }
-    });
   }, 300);
   return () => window.clearInterval(id);
 }
@@ -850,58 +823,6 @@ function qualityToBadges(q: YmkQuality | null): QualityBadge[] {
   return [lighting, frontal, position];
 }
 
-function GreekCountdownOverlay({ allGood, captured }: { allGood: boolean; captured: boolean }) {
-  const [count, setCount] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (!allGood || captured) {
-      setCount(null);
-      return;
-    }
-    setCount(3);
-    let current = 3;
-    const tid = window.setInterval(() => {
-      current--;
-      if (current < 1) {
-        window.clearInterval(tid);
-        setCount(null);
-      } else {
-        setCount(current);
-      }
-    }, 500);
-    return () => window.clearInterval(tid);
-  }, [allGood, captured]);
-
-  if (count === null) return null;
-
-  return (
-    <div style={{
-      position: 'fixed', top: '45%', left: '50%',
-      transform: 'translate(-50%, -50%)',
-      zIndex: 61, pointerEvents: 'none', background: 'transparent',
-    }}>
-      <div style={{
-        background: 'rgba(0, 0, 0, 0.35)', borderRadius: 16,
-        padding: '20px 36px', backdropFilter: 'blur(4px)',
-        textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center',
-      }}>
-        <span style={{ fontSize: 16, color: 'white', opacity: 0.9, textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
-          Λήψη φωτογραφίας σε
-        </span>
-        <span style={{
-          fontSize: 56, fontWeight: 700, color: 'white', lineHeight: 1.2,
-          textShadow: '0 2px 8px rgba(0,0,0,0.8)',
-        }}>
-          {count}
-        </span>
-        <span style={{ fontSize: 14, color: 'white', opacity: 0.8, letterSpacing: '0.04em', textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
-          Μείνετε σταθεροί
-        </span>
-      </div>
-    </div>
-  );
-}
-
 function CameraQualityOverlay({ badges }: { badges: QualityBadge[] }) {
   return (
     <div style={{
@@ -932,7 +853,6 @@ function CameraQualityOverlay({ badges }: { badges: QualityBadge[] }) {
 function Screen4({ onCapture, onBack }: { onCapture: (dataUrl: string, landmarks: Landmark[] | null) => void; onBack: () => void }) {
   const [isLoading, setIsLoading] = useState(!window.YMK);
   const capturedRef = useRef(false);
-  const [captured, setCaptured] = useState(false);
   const [quality, setQuality] = useState<YmkQuality | null>(null);
 
   useEffect(() => {
@@ -941,9 +861,7 @@ function Screen4({ onCapture, onBack }: { onCapture: (dataUrl: string, landmarks
     const handleCapture = (capturedResult: { images: { image: string }[] }) => {
       if (capturedRef.current) return;
       capturedRef.current = true;
-      setCaptured(true);
       stopHiding?.();
-      try { window.YMK.close(); } catch (_) { /* ignore */ }
       const base64 = capturedResult.images[0]?.image;
       if (base64) {
         onCapture(base64, null);
@@ -967,7 +885,6 @@ function Screen4({ onCapture, onBack }: { onCapture: (dataUrl: string, landmarks
             faceDetectionMode: 'skincare',
             imageFormat: 'base64',
             language: 'enu',
-            countingDuration: 500,
           });
           window.YMK.openCameraKit();
           window.YMK.addEventListener('faceDetectionCaptured', handleCapture);
@@ -1016,11 +933,6 @@ function Screen4({ onCapture, onBack }: { onCapture: (dataUrl: string, landmarks
   }, [onCapture]);
 
   const badges = qualityToBadges(quality);
-  const allGood = quality !== null &&
-    quality.hasFace &&
-    quality.lighting !== 'notgood' &&
-    quality.frontal === 'good' &&
-    quality.position === 'good';
 
   return (
     <div style={{
@@ -1044,7 +956,6 @@ function Screen4({ onCapture, onBack }: { onCapture: (dataUrl: string, landmarks
       )}
 
       <CameraQualityOverlay badges={badges} />
-      <GreekCountdownOverlay allGood={allGood} captured={captured} />
 
       <button
         onClick={onBack}
@@ -1795,7 +1706,7 @@ export default function App() {
             <Screen3 onBack={() => navigate(2)} onNext={() => {
               console.log('YMK exists?', typeof window.YMK);
               try {
-                window.YMK.init({ faceDetectionMode: 'skincare', imageFormat: 'base64', language: 'enu', countingDuration: 500 });
+                window.YMK.init({ faceDetectionMode: 'skincare', imageFormat: 'base64', language: 'enu' });
                 console.log('YMK.init called successfully');
                 window.YMK.openCameraKit();
                 console.log('YMK.openCameraKit called successfully');
