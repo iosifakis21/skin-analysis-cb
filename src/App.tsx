@@ -857,21 +857,20 @@ function GreekCountdownOverlay({ allGood, captured }: { allGood: boolean; captur
 
   return (
     <div style={{
-      position: 'fixed', top: '45%', left: 0, width: '100%',
-      transform: 'translateY(-50%)',
-      display: 'flex', flexDirection: 'column', alignItems: 'center',
-      zIndex: 61, pointerEvents: 'none',
+      position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      zIndex: 61, pointerEvents: 'none', background: 'transparent',
     }}>
-      <span style={{ fontSize: 16, color: 'white', opacity: 0.9 }}>
+      <span style={{ fontSize: 16, color: 'white', opacity: 0.9, background: 'transparent', textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
         Λήψη φωτογραφίας σε
       </span>
       <span style={{
         fontSize: 56, fontWeight: 700, color: 'white', lineHeight: 1.2,
-        textShadow: '0 2px 12px rgba(0,0,0,0.5)',
+        textShadow: '0 2px 8px rgba(0,0,0,0.8)', background: 'transparent',
       }}>
         {count}
       </span>
-      <span style={{ fontSize: 14, color: 'white', opacity: 0.8, letterSpacing: '0.04em' }}>
+      <span style={{ fontSize: 14, color: 'white', opacity: 0.8, letterSpacing: '0.04em', background: 'transparent', textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
         Μείνετε σταθεροί
       </span>
     </div>
