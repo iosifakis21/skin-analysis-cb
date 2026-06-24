@@ -764,6 +764,29 @@ function startHidingEnglishBadges(): () => void {
         }
       }
     }
+
+    // Hide Camera Kit's dark countdown overlay while keeping the video visible.
+    // The SDK renders opaque overlay divs on top of the video during its capture phase.
+    const allEls = iDoc.querySelectorAll('div, canvas');
+    allEls.forEach((rawEl) => {
+      const el = rawEl as HTMLElement;
+      const cs = iDoc.defaultView?.getComputedStyle(el);
+      if (!cs) return;
+      const bg = cs.backgroundColor || '';
+      const pos = cs.position;
+      const w = el.offsetWidth;
+      const h = el.offsetHeight;
+      const isFullScreen = (pos === 'absolute' || pos === 'fixed') && w > 200 && h > 200;
+      const isDark = bg.includes('rgba(0') || bg === 'rgb(0, 0, 0)' || bg.includes('rgba(0, 0, 0');
+      if (isFullScreen && isDark && el.tagName !== 'VIDEO') {
+        const hasVideo = el.querySelector('video');
+        if (!hasVideo && el.dataset.ymkHidden !== '1') {
+          el.style.opacity = '0';
+          el.dataset.ymkHidden = '1';
+          console.log('DarkOverlayHide: hid dark overlay element');
+        }
+      }
+    });
   }, 300);
   return () => window.clearInterval(id);
 }
