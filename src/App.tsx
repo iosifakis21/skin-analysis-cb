@@ -853,8 +853,8 @@ function GreekCountdownOverlay({ allGood, captured }: { allGood: boolean; captur
 
   return (
     <div style={{
-      position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      position: 'fixed', top: '45%', left: '50%',
+      transform: 'translate(-50%, -50%)',
       zIndex: 61, pointerEvents: 'none', background: 'transparent',
     }}>
       <div style={{
