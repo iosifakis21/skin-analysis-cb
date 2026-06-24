@@ -96,7 +96,7 @@ const productData: Record<TabKey, ProductEntry> = {
       'Επαναφέρει τη φυσική λάμψη σε θαμπό, ανόμοιο δέρμα',
       'Χαρίζει πιο λεία όψη & ομοιόμορφη υφή από τις πρώτες εβδομάδες',
     ],
-    url: 'https://constantinebeauty.gr/products/elisheva-dark-spots-crea',
+    url: 'https://constantinebeauty.gr/products/elisheva-dark-spots-cream',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCIaaLfQpIiabJK94o2U0QOXxNtR8HSkZghnBD',
   },
 };
