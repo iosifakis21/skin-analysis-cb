@@ -40,7 +40,7 @@ const productData: Record<TabKey, ProductEntry> = {
       'Βελτιώνει ορατά την υφή και ελαχιστοποιεί τους πόρους',
       'Καταπραΰνει και ανανεώνει την κατεστραμμένη επιδερμίδα',
     ],
-    url: 'https://constantinebeauty.gr/products/aether-face-cream',
+    url: 'https://constantinebeauty.gr/products/aether-acne-cream',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVC8jzi4JuBuzK2lRNEWasfkOcy4p6g0TMqDV1Z',
   },
   wrinkles: {
@@ -96,7 +96,7 @@ const productData: Record<TabKey, ProductEntry> = {
       'Επαναφέρει τη φυσική λάμψη σε θαμπό, ανόμοιο δέρμα',
       'Χαρίζει πιο λεία όψη & ομοιόμορφη υφή από τις πρώτες εβδομάδες',
     ],
-    url: 'https://constantinebeauty.gr/products/elisheva-face-cream',
+    url: 'https://constantinebeauty.gr/products/elisheva-dark-spots-crea',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCIaaLfQpIiabJK94o2U0QOXxNtR8HSkZghnBD',
   },
 };
