@@ -101,73 +101,6 @@ const productData: Record<TabKey, ProductEntry> = {
   },
 };
 
-// ─── CT Scan Overlay ─────────────────────────────────────────────────────────
-
-function CTScanOverlay() {
-  const lineRef = useRef<SVGLineElement>(null);
-  const rafRef = useRef<number>(0);
-
-  useEffect(() => {
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes ct-arc-pulse {
-        0% { opacity: 0.6; }
-        100% { opacity: 1; }
-      }
-      .ct-arc { animation: ct-arc-pulse 2s ease-in-out infinite alternate; }
-    `;
-    document.head.appendChild(style);
-
-    const animate = () => {
-      if (lineRef.current) {
-        const t = (Date.now() % 2500) / 2500;
-        const y = 12 + (84 - 12) * (0.5 - 0.5 * Math.cos(t * 2 * Math.PI));
-        lineRef.current.setAttribute('y1', String(y));
-        lineRef.current.setAttribute('y2', String(y));
-      }
-      rafRef.current = requestAnimationFrame(animate);
-    };
-    rafRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      cancelAnimationFrame(rafRef.current);
-      document.head.removeChild(style);
-    };
-  }, []);
-
-  return (
-    <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 55, pointerEvents: 'none' }}>
-      <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-        <defs>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="0.5" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-
-        {/* Top arcs */}
-        <path className="ct-arc" d="M 18,42 A 32,38 0 0 1 47,10" stroke="white" strokeWidth="0.8" fill="none" opacity="0.85" strokeLinecap="round" />
-        <path className="ct-arc" d="M 53,10 A 32,38 0 0 1 82,42" stroke="white" strokeWidth="0.8" fill="none" opacity="0.85" strokeLinecap="round" />
-
-        {/* Bottom arcs */}
-        <path className="ct-arc" d="M 18,54 A 32,38 0 0 0 47,86" stroke="white" strokeWidth="0.8" fill="none" opacity="0.85" strokeLinecap="round" />
-        <path className="ct-arc" d="M 53,86 A 32,38 0 0 0 82,54" stroke="white" strokeWidth="0.8" fill="none" opacity="0.85" strokeLinecap="round" />
-
-        {/* Tick marks at arc endpoints */}
-        <line x1="16.5" y1="42" x2="19.5" y2="42" stroke="white" strokeWidth="0.8" opacity="0.85" strokeLinecap="round" />
-        <line x1="80.5" y1="42" x2="83.5" y2="42" stroke="white" strokeWidth="0.8" opacity="0.85" strokeLinecap="round" />
-        <line x1="16.5" y1="54" x2="19.5" y2="54" stroke="white" strokeWidth="0.8" opacity="0.85" strokeLinecap="round" />
-        <line x1="80.5" y1="54" x2="83.5" y2="54" stroke="white" strokeWidth="0.8" opacity="0.85" strokeLinecap="round" />
-
-        {/* Scan line */}
-        <line ref={lineRef} x1="18" x2="82" y1="48" y2="48" stroke="white" strokeWidth="0.5" opacity="0.9" filter="url(#glow)" />
-      </svg>
-    </div>
-  );
-}
 
 const tabLabels: Record<TabKey, string> = {
   pores: 'Πόροι',
@@ -805,27 +738,35 @@ declare global {
 }
 
 function startHidingEnglishBadges(): () => void {
-  let attempts = 0;
+  let badgeHidden = false;
   const id = window.setInterval(() => {
-    attempts++;
     const iframe = document.querySelector('#YMK-module iframe') as HTMLIFrameElement | null;
-    if (!iframe) {
-      if (attempts >= 33) window.clearInterval(id);
-      return;
-    }
+    if (!iframe) return;
     const iDoc = iframe.contentDocument || iframe.contentWindow?.document;
-    if (!iDoc) {
-      if (attempts >= 33) window.clearInterval(id);
-      return;
+    if (!iDoc) return;
+
+    if (!badgeHidden) {
+      const badgeRow = iDoc.querySelector('div[style*="position: absolute"][style*="top: 40px"]') as HTMLElement | null;
+      if (badgeRow) {
+        badgeRow.style.visibility = 'hidden';
+        console.log('BadgeHide: found and hid badge row');
+        badgeHidden = true;
+      }
     }
-    const badgeRow = iDoc.querySelector('div[style*="position: absolute"][style*="top: 40px"]') as HTMLElement | null;
-    if (badgeRow) {
-      badgeRow.style.visibility = 'hidden';
-      console.log('BadgeHide: found and hid badge row');
-      window.clearInterval(id);
-    } else {
-      console.log('BadgeHide: badge row not found yet');
-      if (attempts >= 33) window.clearInterval(id);
+
+    const walker = iDoc.createTreeWalker(iDoc.body, NodeFilter.SHOW_ELEMENT);
+    let node: Node | null;
+    while ((node = walker.nextNode())) {
+      const el = node as HTMLElement;
+      const text = el.innerText?.trim();
+      if (!text) continue;
+      if (text.includes('Take photo in') || text.includes('Keep your head steady')) {
+        const target = el.closest('div') as HTMLElement | null;
+        if (target && target.style.visibility !== 'hidden') {
+          target.style.visibility = 'hidden';
+          console.log(`TextHide: hid ${text.includes('Take photo') ? 'countdown' : 'steady'} text`);
+        }
+      }
     }
   }, 300);
   return () => window.clearInterval(id);
@@ -890,6 +831,53 @@ function qualityToBadges(q: YmkQuality | null): QualityBadge[] {
   return [lighting, frontal, position];
 }
 
+function GreekCountdownOverlay({ allGood, captured }: { allGood: boolean; captured: boolean }) {
+  const [count, setCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!allGood || captured) {
+      setCount(null);
+      return;
+    }
+    setCount(3);
+    let current = 3;
+    const tid = window.setInterval(() => {
+      current--;
+      if (current < 1) {
+        window.clearInterval(tid);
+        setCount(null);
+      } else {
+        setCount(current);
+      }
+    }, 800);
+    return () => window.clearInterval(tid);
+  }, [allGood, captured]);
+
+  if (count === null) return null;
+
+  return (
+    <div style={{
+      position: 'fixed', top: '45%', left: 0, width: '100%',
+      transform: 'translateY(-50%)',
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      zIndex: 61, pointerEvents: 'none',
+    }}>
+      <span style={{ fontSize: 16, color: 'white', opacity: 0.9 }}>
+        Λήψη φωτογραφίας σε
+      </span>
+      <span style={{
+        fontSize: 56, fontWeight: 700, color: 'white', lineHeight: 1.2,
+        textShadow: '0 2px 12px rgba(0,0,0,0.5)',
+      }}>
+        {count}
+      </span>
+      <span style={{ fontSize: 14, color: 'white', opacity: 0.8, letterSpacing: '0.04em' }}>
+        Μείνετε σταθεροί
+      </span>
+    </div>
+  );
+}
+
 function CameraQualityOverlay({ badges }: { badges: QualityBadge[] }) {
   return (
     <div style={{
@@ -920,6 +908,7 @@ function CameraQualityOverlay({ badges }: { badges: QualityBadge[] }) {
 function Screen4({ onCapture, onBack }: { onCapture: (dataUrl: string, landmarks: Landmark[] | null) => void; onBack: () => void }) {
   const [isLoading, setIsLoading] = useState(!window.YMK);
   const capturedRef = useRef(false);
+  const [captured, setCaptured] = useState(false);
   const [quality, setQuality] = useState<YmkQuality | null>(null);
 
   useEffect(() => {
@@ -928,6 +917,7 @@ function Screen4({ onCapture, onBack }: { onCapture: (dataUrl: string, landmarks
     const handleCapture = (capturedResult: { images: { image: string }[] }) => {
       if (capturedRef.current) return;
       capturedRef.current = true;
+      setCaptured(true);
       stopHiding?.();
       const base64 = capturedResult.images[0]?.image;
       if (base64) {
@@ -1000,6 +990,11 @@ function Screen4({ onCapture, onBack }: { onCapture: (dataUrl: string, landmarks
   }, [onCapture]);
 
   const badges = qualityToBadges(quality);
+  const allGood = quality !== null &&
+    quality.hasFace &&
+    quality.lighting !== 'notgood' &&
+    quality.frontal === 'good' &&
+    quality.position === 'good';
 
   return (
     <div style={{
@@ -1023,6 +1018,7 @@ function Screen4({ onCapture, onBack }: { onCapture: (dataUrl: string, landmarks
       )}
 
       <CameraQualityOverlay badges={badges} />
+      <GreekCountdownOverlay allGood={allGood} captured={captured} />
 
       <button
         onClick={onBack}
@@ -1734,7 +1730,6 @@ export default function App() {
           transition: 'opacity 220ms ease',
         }}
       />
-      {screen === 4 && <CTScanOverlay />}
       <div
         className="w-full flex flex-col"
         style={{
