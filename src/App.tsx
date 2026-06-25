@@ -229,7 +229,7 @@ const crossSellMap: Record<TabKey, CrossSellEntry> = {
       { key: 'peptiva',   why: 'Η ολοκληρωμένη φροντίδα δεν ξεχνά την περιοχή των ματιών' },
     ],
     routine: {
-      title: 'Ολοκληρωμένη Ανανέωση Προσώπου και Βλέμματος',
+      title: 'Ολοκληρωμενη Ανανεωση Προσωπου και Βλεμματος',
       products: ['aether', 'marionova', 'peptiva'],
     },
   },
@@ -239,7 +239,7 @@ const crossSellMap: Record<TabKey, CrossSellEntry> = {
       { key: 'marionova', why: 'Για τις ρυτίδες μαριονέτας που βαθαίνουν με τα χρόνια' },
     ],
     routine: {
-      title: 'Ολοκληρωμένη Αντιγήρανση',
+      title: 'Ολοκληρωμενη Αντιγηρανση',
       products: ['hydranea', 'marionova', 'peptiva'],
     },
   },
@@ -249,7 +249,7 @@ const crossSellMap: Record<TabKey, CrossSellEntry> = {
       { key: 'elisheva', why: 'Σκιά στα μάτια και κηλίδες συχνά πάνε μαζί' },
     ],
     routine: {
-      title: 'Φωτεινό Βλέμμα και Πρόσωπο',
+      title: 'Φωτεινο Βλεμμα και Προσωπο',
       products: ['peptiva', 'hydranea', 'elisheva'],
     },
   },
@@ -259,7 +259,7 @@ const crossSellMap: Record<TabKey, CrossSellEntry> = {
       { key: 'peptiva', why: 'Η αφυδάτωση φαίνεται πρώτα γύρω από τα μάτια' },
     ],
     routine: {
-      title: 'Ολοκληρωμένη Ενυδάτωση και Κάλυψη',
+      title: 'Ολοκληρωμενη Ενυδατωση και Καλυψη',
       products: ['mastique', 'bblise', 'peptiva'],
     },
   },
@@ -269,7 +269,7 @@ const crossSellMap: Record<TabKey, CrossSellEntry> = {
       { key: 'peptiva', why: 'Για φωτεινό βλέμμα που συμπληρώνει το λαμπερό πρόσωπο' },
     ],
     routine: {
-      title: 'Λαμπερό Πρόσωπο Ορισμένο Περίγραμμα και Φωτεινό Βλέμμα',
+      title: 'Λαμπερο Προσωπο Ορισμενο Περιγραμμα και Φωτεινο Βλεμμα',
       products: ['elisheva', 'lineova', 'peptiva'],
     },
   },
@@ -1689,7 +1689,7 @@ function Screen5({
             fontSize: 14, fontWeight: 700, color: '#2C1F14',
             textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0,
           }}>
-            Τι Λειτουργεί Μαζί
+            Τι Λειτουργει Μαζι
           </h2>
           <p style={{ fontSize: 12, color: '#8B7355', margin: '4px 0 0', lineHeight: 1.4 }}>
             {'Τα προϊόντα που συμπληρώνουν τη δράση του ' + productData[activeTab].name + ' για ολοκληρωμένο αποτέλεσμα'}
