@@ -1566,14 +1566,14 @@ function Screen5({
       <div style={{ background: 'white', border: '0.5px solid #DDD8D0', marginBottom: 0 }}>
 
         {/* 7a — Product image */}
-        <div style={{ width: '100%', height: 280, overflow: 'hidden', background: '#F5F0EB' }}>
+        <div style={{ width: '100%', height: 280, overflow: 'hidden' }}>
           <img
             src={product.image}
             alt={product.name}
             style={{
               width: '100%',
               height: '100%',
-              objectFit: 'contain',
+              objectFit: 'cover',
               objectPosition: 'center center',
               display: 'block',
             }}
@@ -1716,7 +1716,7 @@ function Screen5({
                 <img
                   src={p.image}
                   alt={p.name}
-                  style={{ width: '100%', height: 180, objectFit: 'contain', objectPosition: 'center center', display: 'block', background: '#F5F0EB' }}
+                  style={{ width: '100%', height: 180, objectFit: 'cover', display: 'block' }}
                 />
                 <div style={{ padding: '10px 10px 12px' }}>
                   <p style={{
@@ -1802,7 +1802,7 @@ function Screen5({
                 <img
                   src={p.image}
                   alt={p.name}
-                  style={{ width: '100%', height: 180, objectFit: 'contain', objectPosition: 'center center', display: 'block', background: 'rgba(255,255,255,0.06)' }}
+                  style={{ width: '100%', height: 180, objectFit: 'cover', display: 'block' }}
                 />
                 <div style={{ padding: '10px 10px 12px' }}>
                   <p style={{
