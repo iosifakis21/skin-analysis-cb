@@ -43,7 +43,7 @@ const productData: Record<TabKey, ProductEntry> = {
     ],
     url: 'https://constantinebeauty.gr/products/aether-acne-cream',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVC8jzi4JuBuzK2lRNEWasfkOcy4p6g0TMqDV1Z',
-    imagePosition: 'center 65%',
+    imagePosition: 'center 85%',
   },
   wrinkles: {
     name: 'HYDRANEA',
@@ -100,7 +100,7 @@ const productData: Record<TabKey, ProductEntry> = {
     ],
     url: 'https://constantinebeauty.gr/products/elisheva-dark-spots-cream',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCIaaLfQpIiabJK94o2U0QOXxNtR8HSkZghnBD',
-    imagePosition: 'center 65%',
+    imagePosition: 'center 85%',
   },
 };
 
@@ -119,7 +119,7 @@ const crossSellProducts: Record<string, ProductEntry> = {
     ],
     url: 'https://constantinebeauty.gr/products/aether-face-cream',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVC8jzi4JuBuzK2lRNEWasfkOcy4p6g0TMqDV1Z',
-    imagePosition: 'center 20%',
+    imagePosition: 'center 85%',
   },
   hydranea: {
     name: 'HYDRANEA',
@@ -204,7 +204,7 @@ const crossSellProducts: Record<string, ProductEntry> = {
     ],
     url: 'https://constantinebeauty.gr/products/elisheva-face-cream',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCIaaLfQpIiabJK94o2U0QOXxNtR8HSkZghnBD',
-    imagePosition: 'center 20%',
+    imagePosition: 'center 85%',
   },
   marionova: {
     name: 'MARIONOVA',
