@@ -173,6 +173,20 @@ const crossSellProducts: Record<string, ProductEntry> = {
     url: 'https://constantinebeauty.gr/products/lineova-facial-contour-cream',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCKmTX2i0oJiaIxVRUYmetTzqA29y7w8CObGg1',
   },
+  bblise: {
+    name: 'BBLISE',
+    size: '50ml',
+    price: '25€',
+    rating: 0,
+    reviews: 0,
+    benefits: [
+      'Προσφέρει φυσική κάλυψη και ομοιόμορφο τόνο στην επιδερμίδα',
+      'Ενυδατώνει βαθιά και χαρίζει δροσιά που διαρκεί όλη μέρα',
+      'Μειώνει την όψη των ρυτίδων και προσφέρει ορατή σύσφιξη',
+    ],
+    url: 'https://constantinebeauty.gr/products/bblise-cream-with-adjustable-coverage',
+    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCn8IOPIcWG1zXHYvFT9eRJtCU7SjkOWKi3qw0',
+  },
   elisheva: {
     name: 'ELISHEVA',
     size: '50ml',
@@ -212,11 +226,11 @@ const crossSellMap: Record<TabKey, CrossSellEntry> = {
   pores: {
     carousel: [
       { key: 'marionova', why: 'Για τις ρυτίδες μαριονέτας που εμφανίζονται με τα χρόνια' },
-      { key: 'lineova',   why: 'Σφίγγει τη γνάθο που χαλαρώνει παράλληλα με τους πόρους' },
+      { key: 'peptiva',   why: 'Η ολοκληρωμένη φροντίδα δεν ξεχνά την περιοχή των ματιών' },
     ],
     routine: {
-      title: 'Ολοκληρωμένη Ανανέωση και Σύσφιξη',
-      products: ['aether', 'marionova', 'lineova'],
+      title: 'Ολοκληρωμένη Ανανέωση Προσώπου και Βλέμματος',
+      products: ['aether', 'marionova', 'peptiva'],
     },
   },
   wrinkles: {
@@ -241,22 +255,22 @@ const crossSellMap: Record<TabKey, CrossSellEntry> = {
   },
   dehydration: {
     carousel: [
-      { key: 'hydranea', why: 'Η βαθιά θεραπεία κάτω από την κάλυψη' },
-      { key: 'peptiva',  why: 'Η αφυδάτωση φαίνεται πρώτα γύρω από τα μάτια' },
+      { key: 'bblise',  why: 'Χαρίζει φυσική κάλυψη πάνω στην ενυδατωμένη επιδερμίδα' },
+      { key: 'peptiva', why: 'Η αφυδάτωση φαίνεται πρώτα γύρω από τα μάτια' },
     ],
     routine: {
-      title: 'Ολοκληρωμένη Ενυδάτωση και Αντιγήρανση',
-      products: ['mastique', 'hydranea', 'peptiva'],
+      title: 'Ολοκληρωμένη Ενυδάτωση και Κάλυψη',
+      products: ['mastique', 'bblise', 'peptiva'],
     },
   },
   dark_spots: {
     carousel: [
-      { key: 'marionova', why: 'Για τις γραμμές στην περιστοματική ζώνη' },
-      { key: 'lineova',   why: 'Αποκαθιστά το περίγραμμα ενώ η Elisheva φωτίζει τον τόνο' },
+      { key: 'lineova', why: 'Αποκαθιστά το περίγραμμα ενώ η Elisheva φωτίζει τον τόνο' },
+      { key: 'peptiva', why: 'Για φωτεινό βλέμμα που συμπληρώνει το λαμπερό πρόσωπο' },
     ],
     routine: {
-      title: 'Λαμπερό Πρόσωπο και Ορισμένο Περίγραμμα',
-      products: ['elisheva', 'marionova', 'lineova'],
+      title: 'Λαμπερό Πρόσωπο Ορισμένο Περίγραμμα και Φωτεινό Βλέμμα',
+      products: ['elisheva', 'lineova', 'peptiva'],
     },
   },
 };
