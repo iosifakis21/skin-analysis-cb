@@ -1098,15 +1098,84 @@ function CameraQualityOverlay({ quality, detectorReady }: { quality: FaceQuality
   );
 }
 
+function FaceOvalGuide({ allGood }: { allGood: boolean }) {
+  const strokeColor = allGood ? '#22C55E' : 'white';
+  const ovalOpacity = allGood ? 1.0 : 0.6;
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+      style={{
+        position: 'fixed', top: 0, left: 0, width: '100%', height: '100dvh',
+        pointerEvents: 'none', zIndex: 55,
+      }}
+    >
+      <g
+        fill="none"
+        strokeWidth="0.8"
+        strokeLinecap="round"
+        style={{
+          stroke: strokeColor,
+          opacity: ovalOpacity,
+          transition: 'opacity 0.3s, stroke 0.3s',
+        } as React.CSSProperties}
+      >
+        <path d="M 18,42 A 32,40 0 0 1 47,10" />
+        <path d="M 53,10 A 32,40 0 0 1 82,42" />
+        <path d="M 18,54 A 32,40 0 0 0 47,86" />
+        <path d="M 53,86 A 32,40 0 0 0 82,54" />
+        <line x1="15" y1="42" x2="18" y2="42" />
+        <line x1="82" y1="42" x2="85" y2="42" />
+        <line x1="15" y1="54" x2="18" y2="54" />
+        <line x1="82" y1="54" x2="85" y2="54" />
+      </g>
+    </svg>
+  );
+}
+
+function CountdownOverlay({ count }: { count: number }) {
+  return (
+    <div style={{
+      position: 'fixed', top: '45%', left: '50%',
+      transform: 'translate(-50%, -50%)',
+      zIndex: 65, pointerEvents: 'none', textAlign: 'center',
+    }}>
+      <p style={{ fontSize: 16, color: 'white', opacity: 0.9, margin: '0 0 4px' }}>
+        Λήψη φωτογραφίας σε
+      </p>
+      <p style={{
+        fontSize: 64, fontWeight: 700, color: 'white', margin: '0 0 4px',
+        textShadow: '0 2px 16px rgba(0,0,0,0.6)',
+        lineHeight: 1,
+      }}>
+        {count}
+      </p>
+      <p style={{ fontSize: 14, color: 'white', opacity: 0.8, letterSpacing: '0.04em', margin: 0 }}>
+        Μείνετε σταθεροί
+      </p>
+    </div>
+  );
+}
+
 function Screen4({ onCapture, onClose }: { onCapture: (photoDataUrl: string) => void; onClose: () => void }) {
   const [phase, setPhase] = useState<'intro' | 'loading' | 'active' | 'error'>('intro');
   const [errorMsg, setErrorMsg] = useState('');
+  const [countdown, setCountdown] = useState<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const countdownTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const countdownValRef = useRef<number>(0);
+  const capturedRef = useRef(false);
 
   const cameraActive = phase === 'active';
   const { isReady: detectorReady, quality } = useFaceDetection(videoRef, canvasRef, cameraActive);
+
+  const allGood = cameraActive &&
+    quality.hasFace &&
+    quality.lighting !== 'notgood' &&
+    quality.frontal === 'good' &&
+    quality.position === 'good';
 
   const stopCamera = useCallback(() => {
     if (streamRef.current) {
@@ -1118,13 +1187,62 @@ function Screen4({ onCapture, onClose }: { onCapture: (photoDataUrl: string) => 
     }
   }, []);
 
+  const clearCountdown = useCallback(() => {
+    if (countdownTimerRef.current) {
+      clearInterval(countdownTimerRef.current);
+      countdownTimerRef.current = null;
+    }
+    setCountdown(null);
+    countdownValRef.current = 0;
+  }, []);
+
   useEffect(() => {
-    return () => { stopCamera(); };
-  }, [stopCamera]);
+    return () => {
+      stopCamera();
+      clearCountdown();
+    };
+  }, [stopCamera, clearCountdown]);
+
+  const capturePhoto = useCallback(() => {
+    if (capturedRef.current) return;
+    capturedRef.current = true;
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!video || !canvas) return;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+    stopCamera();
+    onCapture(dataUrl);
+  }, [onCapture, stopCamera]);
+
+  useEffect(() => {
+    if (!cameraActive) return;
+
+    if (allGood && !countdownTimerRef.current && !capturedRef.current) {
+      countdownValRef.current = 3;
+      setCountdown(3);
+      countdownTimerRef.current = setInterval(() => {
+        countdownValRef.current -= 1;
+        if (countdownValRef.current <= 0) {
+          clearCountdown();
+          capturePhoto();
+        } else {
+          setCountdown(countdownValRef.current);
+        }
+      }, 1000);
+    } else if (!allGood && countdownTimerRef.current) {
+      clearCountdown();
+    }
+  }, [allGood, cameraActive, clearCountdown, capturePhoto]);
 
   const startCamera = async () => {
     setPhase('loading');
     setErrorMsg('');
+    capturedRef.current = false;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
@@ -1140,23 +1258,8 @@ function Screen4({ onCapture, onClose }: { onCapture: (photoDataUrl: string) => 
     }
   };
 
-  const capturePhoto = useCallback(() => {
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    if (!video || !canvas) return;
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
-    stopCamera();
-    onCapture(dataUrl);
-  }, [onCapture, stopCamera]);
-
-  void capturePhoto;
-
   const handleClose = () => {
+    clearCountdown();
     stopCamera();
     onClose();
   };
@@ -1268,6 +1371,18 @@ function Screen4({ onCapture, onClose }: { onCapture: (photoDataUrl: string) => 
       )}
 
       {cameraActive && <CameraQualityOverlay quality={quality} detectorReady={detectorReady} />}
+
+      {cameraActive && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100%', height: '100dvh',
+          background: 'radial-gradient(ellipse 65% 80% at 50% 48%, transparent 60%, rgba(0,0,0,0.55) 100%)',
+          pointerEvents: 'none', zIndex: 50,
+        }} />
+      )}
+
+      {cameraActive && <FaceOvalGuide allGood={allGood} />}
+
+      {countdown !== null && <CountdownOverlay count={countdown} />}
 
       <video
         ref={videoRef}
