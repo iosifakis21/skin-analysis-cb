@@ -1798,7 +1798,7 @@ function Screen5({
       <p style={{ fontSize: 15, color: '#2C1F14', lineHeight: 1.6, margin: '12px 0 12px' }}>
         {tabCopy[activeTab].intro}{' '}
         <strong>{tabCopy[activeTab].boldWord}</strong>
-        {' '}με την παρακάτω λύση αναζωογόνησης δέρματος.
+        {' '}.
       </p>
 
       {/* SECTION 7 — Product card */}
