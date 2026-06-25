@@ -1100,36 +1100,25 @@ function CameraQualityOverlay({ quality, detectorReady }: { quality: FaceQuality
 
 function FaceOvalGuide({ allGood }: { allGood: boolean }) {
   const strokeColor = allGood ? '#22C55E' : 'white';
-  const ovalOpacity = allGood ? 1.0 : 0.6;
+  const ovalOpacity = allGood ? 1.0 : 0.85;
   return (
-    <svg
-      viewBox="0 0 100 100"
-      preserveAspectRatio="none"
-      style={{
-        position: 'fixed', top: 0, left: 0, width: '100%', height: '100dvh',
-        pointerEvents: 'none', zIndex: 55,
-      }}
-    >
-      <g
-        fill="none"
-        strokeWidth="0.8"
-        strokeLinecap="round"
-        style={{
-          stroke: strokeColor,
-          opacity: ovalOpacity,
-          transition: 'opacity 0.3s, stroke 0.3s',
-        } as React.CSSProperties}
-      >
-        <path d="M 18,42 A 32,40 0 0 1 47,10" />
-        <path d="M 53,10 A 32,40 0 0 1 82,42" />
-        <path d="M 18,54 A 32,40 0 0 0 47,86" />
-        <path d="M 53,86 A 32,40 0 0 0 82,54" />
-        <line x1="15" y1="42" x2="18" y2="42" />
-        <line x1="82" y1="42" x2="85" y2="42" />
-        <line x1="15" y1="54" x2="18" y2="54" />
-        <line x1="82" y1="54" x2="85" y2="54" />
-      </g>
-    </svg>
+    <div style={{
+      position: 'fixed', top: 0, left: 0, width: '100%', height: '100dvh',
+      pointerEvents: 'none', zIndex: 55,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }}>
+      <div style={{
+        width: '72%',
+        aspectRatio: '3 / 4',
+        maxHeight: '62dvh',
+        marginTop: '-6dvh',
+        borderRadius: '50%',
+        border: `3px solid ${strokeColor}`,
+        opacity: ovalOpacity,
+        transition: 'opacity 0.3s, border-color 0.3s',
+        boxShadow: allGood ? '0 0 20px rgba(34,197,94,0.25)' : 'none',
+      }} />
+    </div>
   );
 }
 
