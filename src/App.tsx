@@ -26,6 +26,7 @@ const mockResults = {
 type ProductEntry = {
   name: string; size: string; price: string; rating: number; reviews: number;
   benefits: string[]; url: string; image: string; complement?: string;
+  imagePosition?: string;
 };
 
 const productData: Record<TabKey, ProductEntry> = {
@@ -42,6 +43,7 @@ const productData: Record<TabKey, ProductEntry> = {
     ],
     url: 'https://constantinebeauty.gr/products/aether-acne-cream',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVC8jzi4JuBuzK2lRNEWasfkOcy4p6g0TMqDV1Z',
+    imagePosition: 'center 20%',
   },
   wrinkles: {
     name: 'HYDRANEA',
@@ -98,6 +100,7 @@ const productData: Record<TabKey, ProductEntry> = {
     ],
     url: 'https://constantinebeauty.gr/products/elisheva-dark-spots-cream',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCIaaLfQpIiabJK94o2U0QOXxNtR8HSkZghnBD',
+    imagePosition: 'center 20%',
   },
 };
 
@@ -116,6 +119,7 @@ const crossSellProducts: Record<string, ProductEntry> = {
     ],
     url: 'https://constantinebeauty.gr/products/aether-face-cream',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVC8jzi4JuBuzK2lRNEWasfkOcy4p6g0TMqDV1Z',
+    imagePosition: 'center 20%',
   },
   hydranea: {
     name: 'HYDRANEA',
@@ -200,6 +204,7 @@ const crossSellProducts: Record<string, ProductEntry> = {
     ],
     url: 'https://constantinebeauty.gr/products/elisheva-face-cream',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCIaaLfQpIiabJK94o2U0QOXxNtR8HSkZghnBD',
+    imagePosition: 'center 20%',
   },
   marionova: {
     name: 'MARIONOVA',
@@ -1574,7 +1579,7 @@ function Screen5({
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              objectPosition: 'center center',
+              objectPosition: product.imagePosition ?? 'center center',
               display: 'block',
             }}
           />
@@ -1716,7 +1721,7 @@ function Screen5({
                 <img
                   src={p.image}
                   alt={p.name}
-                  style={{ width: '100%', height: 180, objectFit: 'cover', display: 'block' }}
+                  style={{ width: '100%', height: 180, objectFit: 'cover', objectPosition: p.imagePosition ?? 'center center', display: 'block' }}
                 />
                 <div style={{ padding: '10px 10px 12px' }}>
                   <p style={{
@@ -1802,7 +1807,7 @@ function Screen5({
                 <img
                   src={p.image}
                   alt={p.name}
-                  style={{ width: '100%', height: 180, objectFit: 'cover', display: 'block' }}
+                  style={{ width: '100%', height: 180, objectFit: 'cover', objectPosition: p.imagePosition ?? 'center center', display: 'block' }}
                 />
                 <div style={{ padding: '10px 10px 12px' }}>
                   <p style={{
