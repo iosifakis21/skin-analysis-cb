@@ -1795,10 +1795,10 @@ function Screen5({
       </div>
 
       {/* SECTION 6 — Copy text */}
-      <p style={{ fontSize: 15, color: '#2C1F14', lineHeight: 1.5, margin: '0 0 16px', padding: '16px 0 0' }}>
+      <p style={{ fontSize: 15, color: '#2C1F14', lineHeight: 1.6, margin: '0 0 16px' }}>
         {tabCopy[activeTab].intro}{' '}
         <strong>{tabCopy[activeTab].boldWord}</strong>
-        {' '}με την παρακάτω άμεση λύση αναζωογόνησης δέρματος!
+        {' '}με την παρακάτω λύση αναζωογόνησης δέρματος.
       </p>
 
       {/* SECTION 7 — Product card */}
@@ -1917,7 +1917,7 @@ function Screen5({
             cursor: 'pointer',
           }}
         >
-          ΞΕΚΛΕΙΔΩΣΤΕ ΕΞΕΙΔΙΚΕΥΜΕΝΕΣ ΣΥΜΒΟΥΛΕΣ ΓΙΑ {tabLabel.toUpperCase()}
+          ΞΕΚΛΕΙΔΩΣΤΕ ΕΞΕΙΔΙΚΕΥΜΕΝΕΣ ΣΥΜΒΟΥΛΕΣ ΓΙΑ {tabLabels[activeTab].toUpperCase()}
         </button>
       </div>
 
