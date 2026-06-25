@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { ChevronLeft, Heart, X } from 'lucide-react';
+import { FaceDetector, FilesetResolver } from '@mediapipe/tasks-vision';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -902,250 +903,383 @@ function Screen3({ onBack, onNext }: { onBack: () => void; onNext: () => void })
   );
 }
 
-// ─── Screen 4 — YouCam Camera Kit ────────────────────────────────────────────
+// ─── Screen 4 — Custom Camera ────────────────────────────────────────────────
 
-declare global {
-  interface Window {
-    YMK: {
-      init: (opts: { faceDetectionMode: string; imageFormat: string; language: string }) => void;
-      addEventListener: (event: string, cb: (result: { images: { image: string }[] }) => void) => void;
-      openCameraKit: () => void;
-      closeCameraKit?: () => void;
-    };
-  }
-}
-
-function startHidingEnglishBadges(): () => void {
-  let attempts = 0;
-  const id = window.setInterval(() => {
-    attempts++;
-    const iframe = document.querySelector('#YMK-module iframe') as HTMLIFrameElement | null;
-    if (!iframe) {
-      if (attempts >= 33) window.clearInterval(id);
-      return;
-    }
-    const iDoc = iframe.contentDocument || iframe.contentWindow?.document;
-    if (!iDoc) {
-      if (attempts >= 33) window.clearInterval(id);
-      return;
-    }
-    const badgeRow = iDoc.querySelector('div[style*="position: absolute"][style*="top: 40px"]') as HTMLElement | null;
-    if (badgeRow) {
-      badgeRow.style.visibility = 'hidden';
-      console.log('BadgeHide: found and hid badge row');
-      window.clearInterval(id);
-    } else {
-      console.log('BadgeHide: badge row not found yet');
-      if (attempts >= 33) window.clearInterval(id);
-    }
-  }, 300);
-  return () => window.clearInterval(id);
-}
-
-type QualityState = 'good' | 'ok' | 'bad' | 'none';
-
-interface QualityBadge {
-  label: string;
-  state: QualityState;
-  stateLabel: string;
-}
-
-interface YmkQuality {
+interface FaceQuality {
   hasFace: boolean;
-  position: string;
-  frontal: string;
-  lighting: string;
+  position: 'good' | 'toosmall' | 'outofboundary';
+  frontal: 'good' | 'notgood';
+  lighting: 'good' | 'ok' | 'notgood';
 }
 
-const badgeColors: Record<QualityState, { bg: string; text: string }> = {
-  good: { bg: 'rgba(34,197,94,0.85)', text: '#fff' },
-  ok: { bg: 'rgba(234,179,8,0.85)', text: '#fff' },
-  bad: { bg: 'rgba(239,68,68,0.85)', text: '#fff' },
-  none: { bg: 'rgba(120,120,120,0.7)', text: '#ddd' },
+const DEFAULT_QUALITY: FaceQuality = {
+  hasFace: false,
+  position: 'toosmall',
+  frontal: 'notgood',
+  lighting: 'notgood',
 };
 
-function qualityToBadges(q: YmkQuality | null): QualityBadge[] {
-  if (!q) {
-    return [
-      { label: 'Φωτισμός', state: 'none', stateLabel: '...' },
-      { label: 'Κοιτάξτε Ευθεία', state: 'none', stateLabel: '...' },
-      { label: 'Θέση Προσώπου', state: 'none', stateLabel: '...' },
-    ];
-  }
-  if (!q.hasFace) {
-    return [
-      { label: 'Φωτισμός', state: 'none', stateLabel: 'Δεν Εντοπίστηκε' },
-      { label: 'Κοιτάξτε Ευθεία', state: 'none', stateLabel: 'Δεν Εντοπίστηκε' },
-      { label: 'Θέση Προσώπου', state: 'none', stateLabel: 'Δεν Εντοπίστηκε' },
-    ];
-  }
+function useFaceDetection(
+  videoRef: React.RefObject<HTMLVideoElement | null>,
+  canvasRef: React.RefObject<HTMLCanvasElement | null>,
+  active: boolean,
+) {
+  const [isReady, setIsReady] = useState(false);
+  const [quality, setQuality] = useState<FaceQuality>(DEFAULT_QUALITY);
+  const detectorRef = useRef<FaceDetector | null>(null);
+  const rafRef = useRef<number>(0);
 
-  const lighting: QualityBadge = q.lighting === 'good'
-    ? { label: 'Φωτισμός', state: 'good', stateLabel: 'Καλό' }
-    : q.lighting === 'ok'
-      ? { label: 'Φωτισμός', state: 'ok', stateLabel: 'Εντάξει' }
-      : { label: 'Φωτισμός', state: 'bad', stateLabel: 'Αυξήστε το Φως' };
+  useEffect(() => {
+    if (!active) return;
+    let cancelled = false;
 
-  const frontal: QualityBadge = q.frontal === 'good'
-    ? { label: 'Κοιτάξτε Ευθεία', state: 'good', stateLabel: 'Καλό' }
-    : { label: 'Κοιτάξτε Ευθεία', state: 'bad', stateLabel: 'Όχι Καλό' };
+    (async () => {
+      try {
+        const filesetResolver = await FilesetResolver.forVisionTasks(
+          'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision/wasm',
+        );
+        if (cancelled) return;
+        const detector = await FaceDetector.createFromOptions(filesetResolver, {
+          baseOptions: {
+            modelAssetPath:
+              'https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite',
+            delegate: 'GPU',
+          },
+          runningMode: 'VIDEO',
+          minDetectionConfidence: 0.5,
+        });
+        if (cancelled) { detector.close(); return; }
+        detectorRef.current = detector;
+        setIsReady(true);
+      } catch (err) {
+        console.error('FaceDetector init failed:', err);
+      }
+    })();
 
-  const position: QualityBadge = q.position === 'good'
-    ? { label: 'Θέση Προσώπου', state: 'good', stateLabel: 'Καλό' }
-    : q.position === 'toosmall'
-      ? { label: 'Θέση Προσώπου', state: 'bad', stateLabel: 'Πλησιάστε' }
-      : q.position === 'outofboundary'
-        ? { label: 'Θέση Προσώπου', state: 'bad', stateLabel: 'Εκτός Πλαισίου' }
-        : { label: 'Θέση Προσώπου', state: 'bad', stateLabel: 'Εκτός Πλαισίου' };
+    return () => {
+      cancelled = true;
+      if (detectorRef.current) {
+        detectorRef.current.close();
+        detectorRef.current = null;
+      }
+      setIsReady(false);
+    };
+  }, [active]);
 
-  return [lighting, frontal, position];
+  useEffect(() => {
+    if (!active || !isReady) return;
+
+    const detect = () => {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      const detector = detectorRef.current;
+
+      if (!video || !canvas || !detector || video.readyState < 2) {
+        rafRef.current = requestAnimationFrame(detect);
+        return;
+      }
+
+      const results = detector.detectForVideo(video, performance.now());
+      const vw = video.videoWidth;
+      const vh = video.videoHeight;
+
+      if (!results.detections || results.detections.length === 0) {
+        setQuality({ ...DEFAULT_QUALITY });
+        rafRef.current = requestAnimationFrame(detect);
+        return;
+      }
+
+      const det = results.detections[0];
+      const bb = det.boundingBox!;
+
+      // Position
+      const faceRatio = bb.width / vw;
+      const position: FaceQuality['position'] =
+        faceRatio < 0.50 ? 'toosmall' : faceRatio > 0.85 ? 'outofboundary' : 'good';
+
+      // Frontal
+      let frontal: FaceQuality['frontal'] = 'notgood';
+      if (det.keypoints && det.keypoints.length >= 2) {
+        const eyeMidX = (det.keypoints[0].x + det.keypoints[1].x) / 2;
+        const faceCenterX = (bb.originX + bb.width / 2) / vw;
+        frontal = Math.abs(eyeMidX - faceCenterX) > 0.08 ? 'notgood' : 'good';
+      }
+
+      // Lighting — sample center of face bounding box
+      let lighting: FaceQuality['lighting'] = 'ok';
+      canvas.width = vw;
+      canvas.height = vh;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      if (ctx) {
+        ctx.drawImage(video, 0, 0, vw, vh);
+        const sampleSize = 50;
+        const sx = Math.max(0, Math.min(vw - sampleSize, Math.round(bb.originX + bb.width / 2 - sampleSize / 2)));
+        const sy = Math.max(0, Math.min(vh - sampleSize, Math.round(bb.originY + bb.height / 2 - sampleSize / 2)));
+        const imageData = ctx.getImageData(sx, sy, sampleSize, sampleSize);
+        const pixels = imageData.data;
+        let totalLuma = 0;
+        const pixelCount = pixels.length / 4;
+        for (let i = 0; i < pixels.length; i += 4) {
+          totalLuma += 0.299 * pixels[i] + 0.587 * pixels[i + 1] + 0.114 * pixels[i + 2];
+        }
+        const avgLuma = totalLuma / pixelCount;
+        if (avgLuma < 70 || avgLuma > 230) lighting = 'notgood';
+        else if (avgLuma >= 130 && avgLuma <= 200) lighting = 'good';
+        else lighting = 'ok';
+      }
+
+      setQuality({ hasFace: true, position, frontal, lighting });
+      rafRef.current = requestAnimationFrame(detect);
+    };
+
+    rafRef.current = requestAnimationFrame(detect);
+    return () => { cancelAnimationFrame(rafRef.current); };
+  }, [active, isReady, videoRef, canvasRef]);
+
+  return { isReady, quality };
 }
 
-function CameraQualityOverlay({ badges }: { badges: QualityBadge[] }) {
+type BadgeState = 'good' | 'ok' | 'bad';
+
+const BADGE_COLORS: Record<BadgeState, string> = {
+  good: 'rgba(34,197,94,0.85)',
+  ok: 'rgba(245,158,11,0.85)',
+  bad: 'rgba(239,68,68,0.85)',
+};
+
+function CameraQualityOverlay({ quality, detectorReady }: { quality: FaceQuality; detectorReady: boolean }) {
+  const lightingState: BadgeState = !quality.hasFace ? 'bad' : quality.lighting === 'good' ? 'good' : quality.lighting === 'ok' ? 'ok' : 'bad';
+  const lightingLabel = !quality.hasFace ? 'Δεν Εντοπίστηκε' : quality.lighting === 'good' ? 'Καλό' : quality.lighting === 'ok' ? 'Εντάξει' : 'Αυξήστε το Φως';
+
+  const frontalState: BadgeState = !quality.hasFace ? 'bad' : quality.frontal === 'good' ? 'good' : 'bad';
+  const frontalLabel = !quality.hasFace ? 'Δεν Εντοπίστηκε' : quality.frontal === 'good' ? 'Καλό' : 'Όχι Καλό';
+
+  const positionState: BadgeState = !quality.hasFace ? 'bad' : quality.position === 'good' ? 'good' : 'bad';
+  const positionLabel = !quality.hasFace
+    ? 'Δεν Εντοπίστηκε'
+    : quality.position === 'good' ? 'Καλό' : quality.position === 'toosmall' ? 'Πλησιάστε' : 'Εκτός Πλαισίου';
+
+  const badges: { title: string; state: BadgeState; label: string }[] = [
+    { title: 'Φωτισμός', state: lightingState, label: lightingLabel },
+    { title: 'Κοιτάξτε Ευθεία', state: frontalState, label: frontalLabel },
+    { title: 'Θέση Προσώπου', state: positionState, label: positionLabel },
+  ];
+
   return (
     <div style={{
-      position: 'fixed', top: 16, left: 0, width: '100%',
-      display: 'flex', justifyContent: 'center', gap: 8,
-      zIndex: 60, pointerEvents: 'none',
+      position: 'fixed', top: 0, left: 0, width: '100%',
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      paddingTop: 16, zIndex: 60, pointerEvents: 'none',
     }}>
-      {badges.map((b) => {
-        const colors = badgeColors[b.state];
-        return (
-          <div key={b.label} style={{
-            background: colors.bg, color: colors.text,
+      <div style={{ display: 'flex', gap: 8 }}>
+        {badges.map((b) => (
+          <div key={b.title} style={{
+            background: BADGE_COLORS[b.state], color: '#fff',
             padding: '6px 14px', borderRadius: 20,
             fontSize: 12, fontWeight: 600, letterSpacing: '0.02em',
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1,
             backdropFilter: 'blur(8px)',
             boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
           }}>
-            <span style={{ fontSize: 10, opacity: 0.9 }}>{b.label}</span>
-            <span>{b.stateLabel}</span>
+            <span style={{ fontSize: 10, opacity: 0.9 }}>{b.title}</span>
+            <span>{b.label}</span>
           </div>
-        );
-      })}
+        ))}
+      </div>
+      {!detectorReady && (
+        <span style={{
+          marginTop: 8, fontSize: 11, color: 'rgba(255,255,255,0.7)',
+          fontWeight: 500, letterSpacing: '0.03em',
+        }}>
+          Φόρτωση ανίχνευσης...
+        </span>
+      )}
     </div>
   );
 }
 
-function Screen4({ onCapture, onBack }: { onCapture: (dataUrl: string, landmarks: Landmark[] | null) => void; onBack: () => void }) {
-  const [isLoading, setIsLoading] = useState(!window.YMK);
-  const capturedRef = useRef(false);
-  const [quality, setQuality] = useState<YmkQuality | null>(null);
+function Screen4({ onCapture, onClose }: { onCapture: (photoDataUrl: string) => void; onClose: () => void }) {
+  const [phase, setPhase] = useState<'intro' | 'loading' | 'active' | 'error'>('intro');
+  const [errorMsg, setErrorMsg] = useState('');
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+
+  const cameraActive = phase === 'active';
+  const { isReady: detectorReady, quality } = useFaceDetection(videoRef, canvasRef, cameraActive);
+
+  const stopCamera = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(t => t.stop());
+      streamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+  }, []);
 
   useEffect(() => {
-    let stopHiding: (() => void) | null = null;
+    return () => { stopCamera(); };
+  }, [stopCamera]);
 
-    const handleCapture = (capturedResult: { images: { image: string }[] }) => {
-      if (capturedRef.current) return;
-      capturedRef.current = true;
-      stopHiding?.();
-      const base64 = capturedResult.images[0]?.image;
-      if (base64) {
-        onCapture(base64, null);
+  const startCamera = async () => {
+    setPhase('loading');
+    setErrorMsg('');
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } },
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
       }
-    };
-
-    const handleQuality = (q: YmkQuality) => {
-      console.log('Quality event:', JSON.stringify(q));
-      setQuality(q);
-    };
-
-    if (window.YMK) {
-      window.YMK.addEventListener('faceDetectionCaptured', handleCapture);
-      window.YMK.addEventListener('faceQualityChanged', handleQuality);
-      stopHiding = startHidingEnglishBadges();
-    } else {
-      const pollId = window.setInterval(() => {
-        if (window.YMK) {
-          window.clearInterval(pollId);
-          window.YMK.init({
-            faceDetectionMode: 'skincare',
-            imageFormat: 'base64',
-            language: 'enu',
-          });
-          window.YMK.openCameraKit();
-          window.YMK.addEventListener('faceDetectionCaptured', handleCapture);
-          window.YMK.addEventListener('faceQualityChanged', handleQuality);
-          stopHiding = startHidingEnglishBadges();
-          setIsLoading(false);
-        }
-      }, 200);
-      return () => {
-        window.clearInterval(pollId);
-        stopHiding?.();
-
-        if (window.YMK && typeof window.YMK.closeCameraKit === 'function') {
-          try {
-            window.YMK.closeCameraKit();
-          } catch (e) {
-            console.error('Failed to close YMK camera:', e);
-          }
-        }
-
-        document.body.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.touchAction = '';
-        document.documentElement.style.overflow = '';
-        document.documentElement.style.touchAction = '';
-      };
+      setPhase('active');
+    } catch {
+      setPhase('error');
+      setErrorMsg('Δεν επιτράπηκε η πρόσβαση στην κάμερα. Ελέγξτε τις ρυθμίσεις σας.');
     }
+  };
 
-    return () => {
-      stopHiding?.();
+  const capturePhoto = useCallback(() => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!video || !canvas) return;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+    stopCamera();
+    onCapture(dataUrl);
+  }, [onCapture, stopCamera]);
 
-      if (window.YMK && typeof window.YMK.closeCameraKit === 'function') {
-        try {
-          window.YMK.closeCameraKit();
-        } catch (e) {
-          console.error('Failed to close YMK camera:', e);
-        }
-      }
+  void capturePhoto;
 
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.touchAction = '';
-      document.documentElement.style.overflow = '';
-      document.documentElement.style.touchAction = '';
-    };
-  }, [onCapture]);
+  const handleClose = () => {
+    stopCamera();
+    onClose();
+  };
 
-  const badges = qualityToBadges(quality);
+  // INTRO SCREEN
+  if (phase === 'intro') {
+    return (
+      <div style={{
+        position: 'relative', display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        minHeight: '100dvh', background: '#1A1A1A', padding: '0 16px',
+        flex: 1,
+      }}>
+        <button onClick={handleClose} style={{
+          position: 'absolute', top: 16, right: 16, zIndex: 10,
+          background: 'none', border: 'none', cursor: 'pointer',
+          width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <X size={22} color="white" />
+        </button>
 
+        <div style={{ textAlign: 'center', marginBottom: 48 }}>
+          <p style={{
+            fontSize: 22, fontWeight: 700, color: 'white', letterSpacing: '0.12em',
+            marginBottom: 32,
+          }}>
+            CONSTANTINE
+          </p>
+          <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)', lineHeight: 1.7, marginBottom: 8 }}>
+            Τοποθετήστε το πρόσωπό σας μέσα στο πλαίσιο
+          </p>
+          <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)', lineHeight: 1.7, marginBottom: 8 }}>
+            Βεβαιωθείτε ότι έχετε καλό φωτισμό
+          </p>
+          <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)', lineHeight: 1.7 }}>
+            Αφαιρέστε τα γυαλιά σας αν φοράτε
+          </p>
+        </div>
+
+        <button onClick={startCamera} style={{
+          width: 'calc(100% - 32px)', maxWidth: 398, height: 52,
+          background: '#4A3728', color: 'white', border: 'none',
+          borderRadius: 4, fontSize: 14, fontWeight: 700, letterSpacing: '0.08em',
+          cursor: 'pointer',
+        }}>
+          ΕΝΑΡΞΗ ΣΑΡΩΣΗΣ
+        </button>
+      </div>
+    );
+  }
+
+  // ERROR SCREEN
+  if (phase === 'error') {
+    return (
+      <div style={{
+        position: 'relative', display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        minHeight: '100dvh', background: '#1A1A1A', padding: '0 16px',
+        flex: 1,
+      }}>
+        <button onClick={handleClose} style={{
+          position: 'absolute', top: 16, right: 16, zIndex: 10,
+          background: 'none', border: 'none', cursor: 'pointer',
+          width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <X size={22} color="white" />
+        </button>
+
+        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)', textAlign: 'center', lineHeight: 1.7, marginBottom: 32 }}>
+          {errorMsg}
+        </p>
+
+        <button onClick={startCamera} style={{
+          width: 'calc(100% - 32px)', maxWidth: 398, height: 52,
+          background: '#4A3728', color: 'white', border: 'none',
+          borderRadius: 4, fontSize: 14, fontWeight: 700, letterSpacing: '0.08em',
+          cursor: 'pointer',
+        }}>
+          ΔΟΚΙΜΑΣΤΕ ΞΑΝΑ
+        </button>
+      </div>
+    );
+  }
+
+  // LOADING + ACTIVE CAMERA
   return (
     <div style={{
-      position: 'relative',
-      display: 'flex',
-      flexDirection: 'column',
-      minHeight: '100dvh',
-      background: '#000',
-      flex: 1,
+      position: 'relative', display: 'flex', flexDirection: 'column',
+      minHeight: '100dvh', background: '#000', flex: 1,
     }}>
-      {isLoading && (
+      <button onClick={handleClose} style={{
+        position: 'absolute', top: 16, right: 16, zIndex: 70,
+        background: 'none', border: 'none', cursor: 'pointer',
+        width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>
+        <X size={22} color="white" />
+      </button>
+
+      {phase === 'loading' && (
         <div style={{
           position: 'absolute', inset: 0,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           background: 'rgba(0,0,0,0.6)', zIndex: 20,
         }}>
           <span style={{ color: 'white', fontSize: 16, fontWeight: 600, letterSpacing: '0.05em' }}>
-            Φόρτωση κάμερας...
+            Φόρτωση...
           </span>
         </div>
       )}
 
-      <CameraQualityOverlay badges={badges} />
+      {cameraActive && <CameraQualityOverlay quality={quality} detectorReady={detectorReady} />}
 
-      <button
-        onClick={onBack}
+      <video
+        ref={videoRef}
+        autoPlay
+        playsInline
+        muted
         style={{
-          position: 'absolute', top: 16, right: 16, zIndex: 70,
-          background: 'none', border: 'none', cursor: 'pointer',
-          padding: 4, display: 'flex', alignItems: 'center',
+          width: '100%', height: '100dvh', objectFit: 'cover',
+          transform: 'scaleX(-1)', display: 'block',
         }}
-      >
-        <X size={22} color="white" />
-      </button>
-
+      />
+      <canvas ref={canvasRef} style={{ display: 'none' }} />
     </div>
   );
 }
@@ -1934,21 +2068,6 @@ export default function App() {
   return (
     <div className="flex justify-center" style={{ minHeight: '100dvh', background: '#FAF8F5' }}>
       <div
-        id="YMK-module"
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          zIndex: screen === 4 ? 50 : -100,
-          opacity: screen === 4 ? 1 : 0,
-          visibility: screen === 4 ? 'visible' : 'hidden',
-          pointerEvents: screen === 4 ? 'auto' : 'none',
-          transition: 'opacity 220ms ease',
-        }}
-      />
-      <div
         className="w-full flex flex-col"
         style={{
           maxWidth: 430,
@@ -1984,27 +2103,16 @@ export default function App() {
             <Screen2 onBack={() => navigate(1)} onNext={(age) => { setAgeGroup(age); navigate(3); }} />
           )}
           {screen === 3 && (
-            <Screen3 onBack={() => navigate(2)} onNext={() => {
-              console.log('YMK exists?', typeof window.YMK);
-              try {
-                window.YMK.init({ faceDetectionMode: 'skincare', imageFormat: 'base64', language: 'enu' });
-                console.log('YMK.init called successfully');
-                window.YMK.openCameraKit();
-                console.log('YMK.openCameraKit called successfully');
-              } catch (err) {
-                console.error('YMK camera start failed:', err);
-              }
-              navigate(4);
-            }} />
+            <Screen3 onBack={() => navigate(2)} onNext={() => navigate(4)} />
           )}
           {screen === 4 && (
             <Screen4
-              onCapture={(url, landmarks) => {
+              onCapture={(url) => {
                 setPhotoDataUrl(url);
-                setCapturedLandmarks(landmarks);
+                setCapturedLandmarks(null);
                 navigate(5);
               }}
-              onBack={() => navigate(3)}
+              onClose={() => navigate(3)}
             />
           )}
           {screen === 5 && (
