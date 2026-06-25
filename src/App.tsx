@@ -25,7 +25,7 @@ const mockResults = {
 
 type ProductEntry = {
   name: string; size: string; price: string; rating: number; reviews: number;
-  benefits: string[]; url: string; image: string;
+  benefits: string[]; url: string; image: string; complement?: string;
 };
 
 const productData: Record<TabKey, ProductEntry> = {
@@ -101,6 +101,157 @@ const productData: Record<TabKey, ProductEntry> = {
   },
 };
 
+
+const crossSellProducts: Record<string, ProductEntry> = {
+  aether: {
+    name: 'AETHER',
+    size: '50ml',
+    price: '29€',
+    rating: 4.8,
+    reviews: 1832,
+    benefits: [
+      'Εξισορροπεί το λιπαρό δέρμα χωρίς να το ξεραίνει',
+      'Βελτιώνει ορατά την υφή και ελαχιστοποιεί τους πόρους',
+      'Καταπραΰνει και ανανεώνει την κατεστραμμένη επιδερμίδα',
+    ],
+    url: 'https://constantinebeauty.gr/products/aether-face-cream',
+    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVC8jzi4JuBuzK2lRNEWasfkOcy4p6g0TMqDV1Z',
+  },
+  hydranea: {
+    name: 'HYDRANEA',
+    size: '50ml',
+    price: '45€',
+    rating: 4.9,
+    reviews: 421,
+    benefits: [
+      'Βαθιά ενυδάτωση με βλαστοκύτταρα Ιαπωνικής Ορχιδέας',
+      'Αντιγηραντική δράση με νιασιναμίδη για ορατή μείωση ρυτίδων',
+      'Ορατά αποτελέσματα σε 7 ημέρες',
+    ],
+    url: 'https://constantinebeauty.gr/products/hydranea-anti-aging-face-cream-with-stem-cells-niacinamide',
+    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCAAS7KbYqQC0y6sv4a7w29ofDt1LmekcVdrhE',
+  },
+  peptiva: {
+    name: 'PEPTIVA',
+    size: '30ml',
+    price: '25€',
+    rating: 0,
+    reviews: 0,
+    benefits: [
+      'Λειαίνει το μεσόφρυο και απαλύνει το πόδι της χήνας',
+      'Μειώνει σακούλες και μαύρους κύκλους που κουράζουν το βλέμμα',
+      'Αποκαθιστά φωτεινό σφριγηλό και ξεκούραστο βλέμμα',
+    ],
+    url: 'https://constantinebeauty.gr/products/peptiva-eye-cream',
+    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVC1qHYI82soUS7c3ADruwWEFRV014KZtp26OmQ',
+  },
+  bblise: {
+    name: 'BBLISE',
+    size: '50ml',
+    price: '25€',
+    rating: 0,
+    reviews: 0,
+    benefits: [
+      'Προσφέρει φυσική κάλυψη και ομοιόμορφο τόνο στην επιδερμίδα',
+      'Ενυδατώνει βαθιά και χαρίζει δροσιά που διαρκεί όλη μέρα',
+      'Μειώνει την όψη των ρυτίδων και προσφέρει ορατή σύσφιξη',
+    ],
+    url: 'https://constantinebeauty.gr/products/bblise-cream-with-adjustable-coverage',
+    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCn8IOPIcWG1zXHYvFT9eRJtCU7SjkOWKi3qw0',
+  },
+  elisheva: {
+    name: 'ELISHEVA',
+    size: '50ml',
+    price: '29€',
+    rating: 4.8,
+    reviews: 1832,
+    benefits: [
+      'Βελτιώνει ορατά τον τόνο και μειώνει τις δυσχρωμίες',
+      'Επαναφέρει τη φυσική λάμψη σε θαμπό ανόμοιο δέρμα',
+      'Χαρίζει πιο λεία όψη και ομοιόμορφη υφή από τις πρώτες εβδομάδες',
+    ],
+    url: 'https://constantinebeauty.gr/products/elisheva-face-cream',
+    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCIaaLfQpIiabJK94o2U0QOXxNtR8HSkZghnBD',
+  },
+  marionova: {
+    name: 'MARIONOVA',
+    size: '30ml',
+    price: '29€',
+    rating: 4.8,
+    reviews: 2367,
+    benefits: [
+      'Ορατή μείωση του βάθους των ρυτίδων μαριονέτας',
+      'Εντατική αναδόμηση της περιστοματικής ζώνης',
+      'Αναπλήρωση του χαμένου όγκου και σύσφιξη περιγράμματος',
+    ],
+    url: 'https://constantinebeauty.gr/products/marionova-creamy-serum-for-marionette-lines',
+    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCS5xQCl9tPvsbX7QlkrMNx1nUou8R05HCqfm3',
+  },
+};
+
+type CrossSellEntry = {
+  complement: string;
+  carousel: { key: string; why: string }[];
+  routine: { title: string; products: string[] };
+};
+
+const crossSellMap: Record<TabKey, CrossSellEntry> = {
+  pores: {
+    complement: 'Για τα σημάδια που αφήνει η ακμή',
+    carousel: [
+      { key: 'elisheva', why: 'Για τα σημάδια που αφήνει η ακμή' },
+      { key: 'hydranea', why: 'Επισκευάζει τον φραγμό μετά τη θεραπεία' },
+    ],
+    routine: {
+      title: 'Ολοκληρωμένη Καθαρή Επιδερμίδα',
+      products: ['aether', 'elisheva', 'hydranea'],
+    },
+  },
+  wrinkles: {
+    complement: 'Γιατί η γήρανση δεν σταματά στα μάτια',
+    carousel: [
+      { key: 'peptiva', why: 'Γιατί η γήρανση δεν σταματά στα μάτια' },
+      { key: 'marionova', why: 'Για τις ρυτίδες μαριονέτας που βαθαίνουν με τα χρόνια' },
+    ],
+    routine: {
+      title: 'Ολοκληρωμένη Αντιγήρανση',
+      products: ['hydranea', 'marionova', 'peptiva'],
+    },
+  },
+  dark_circles: {
+    complement: 'Η αντιγήρανση του προσώπου ολοκληρώνει τη φροντίδα',
+    carousel: [
+      { key: 'hydranea', why: 'Η αντιγήρανση του προσώπου ολοκληρώνει τη φροντίδα' },
+      { key: 'elisheva', why: 'Σκιά στα μάτια και κηλίδες συχνά πάνε μαζί' },
+    ],
+    routine: {
+      title: 'Φωτεινό Βλέμμα και Πρόσωπο',
+      products: ['peptiva', 'hydranea', 'elisheva'],
+    },
+  },
+  dehydration: {
+    complement: 'Η βαθιά θεραπεία κάτω από την κάλυψη',
+    carousel: [
+      { key: 'hydranea', why: 'Η βαθιά θεραπεία κάτω από την κάλυψη' },
+      { key: 'peptiva', why: 'Η αφυδάτωση φαίνεται πρώτα γύρω από τα μάτια' },
+    ],
+    routine: {
+      title: 'Ολοκληρωμένη Ενυδάτωση και Αντιγήρανση',
+      products: ['bblise', 'hydranea', 'peptiva'],
+    },
+  },
+  dark_spots: {
+    complement: 'Κηλίδες και γήρανση πάνε πάντα μαζί',
+    carousel: [
+      { key: 'hydranea', why: 'Κηλίδες και γήρανση πάνε πάντα μαζί' },
+      { key: 'marionova', why: 'Για τις γραμμές στην περιστοματική ζώνη' },
+    ],
+    routine: {
+      title: 'Ολοκληρωμένη Λαμπερή Επιδερμίδα',
+      products: ['elisheva', 'hydranea', 'marionova'],
+    },
+  },
+};
 
 const tabLabels: Record<TabKey, string> = {
   pores: 'Πόροι',
@@ -1177,13 +1328,6 @@ function Screen5({
   const isStrongPoint = currentScore <= STRONG_POINT_THRESHOLD;
   const showBanner = isFocusArea || isStrongPoint;
 
-  const routineConcerns: TabKey[] = analysisScores
-    ? ([...tabOrder] as TabKey[]).sort(
-        (a, b) => (analysisScores[b] as number) - (analysisScores[a] as number)
-      ).slice(0, 3)
-    : [];
-  const routineProducts = routineConcerns.map((tab) => ({ tab, ...productData[tab] }));
-
   return (
     <div style={{ background: '#FAF8F5', minHeight: '100dvh', padding: '0 16px', boxSizing: 'border-box' }}>
 
@@ -1466,6 +1610,16 @@ function Screen5({
           >
             ΠΡΟΣΘΗΚΗ ΣΤΟ ΚΑΛΑΘΙ
           </button>
+
+          <p style={{
+            fontSize: 11,
+            color: '#8B7355',
+            textAlign: 'center',
+            margin: '0 0 16px',
+            letterSpacing: '0.02em',
+          }}>
+            Εγγύηση 90 ημερών. Αν δεν δείτε αποτέλεσμα επιστρέφουμε τα χρήματά σας.
+          </p>
         </div>
 
         {/* 7c — Key benefits */}
@@ -1506,71 +1660,171 @@ function Screen5({
         </button>
       </div>
 
-      {/* SECTION 8 — Personalised skincare routine */}
-      <div style={{ background: '#F5F3F0', padding: '20px 16px', marginTop: 0, margin: '0 -16px' }}>
-        <h2 style={{ fontSize: 18, fontWeight: 700, color: '#2C1F14', textTransform: 'uppercase', margin: '0 0 8px', letterSpacing: '0.01em' }}>
-          Η ΕΞΑΤΟΜΙΚΕΥΜΕΝΗ ΡΟΥΤΙΝΑ ΠΕΡΙΠΟΙΗΣΗΣ ΣΑΣ
+      {/* SECTION 8 — Cross-sell carousel */}
+      <div style={{ background: '#F5F3F0', padding: '20px 0', margin: '0 -16px' }}>
+        <div style={{ padding: '0 16px 12px' }}>
+          <h2 style={{
+            fontSize: 14, fontWeight: 700, color: '#2C1F14',
+            textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0,
+          }}>
+            Τι Λειτουργεί Μαζί
+          </h2>
+          <p style={{ fontSize: 12, color: '#8B7355', margin: '4px 0 0', lineHeight: 1.4 }}>
+            {'Τα προϊόντα που συμπληρώνουν τη δράση του ' + productData[activeTab].name + ' για ολοκληρωμένο αποτέλεσμα'}
+          </p>
+        </div>
+
+        <div style={{
+          display: 'flex',
+          gap: 12,
+          overflowX: 'auto',
+          padding: '0 16px 12px',
+          scrollbarWidth: 'none',
+          WebkitOverflowScrolling: 'touch',
+        }}>
+          {crossSellMap[activeTab].carousel.map(({ key, why }) => {
+            const p = crossSellProducts[key];
+            return (
+              <div key={key} style={{
+                width: 180, flexShrink: 0,
+                background: 'white',
+                border: '0.5px solid #DDD8D0',
+                position: 'relative',
+              }}>
+                <img
+                  src={p.image}
+                  alt={p.name}
+                  style={{ width: '100%', height: 180, objectFit: 'cover', display: 'block' }}
+                />
+                <div style={{ padding: '10px 10px 12px' }}>
+                  <p style={{
+                    fontSize: 10, color: '#8B7355', margin: '0 0 4px',
+                    fontStyle: 'italic', lineHeight: 1.3,
+                  }}>
+                    {why}
+                  </p>
+                  <p style={{
+                    fontSize: 12, fontWeight: 700, color: '#2C1F14',
+                    margin: '0 0 2px', textTransform: 'uppercase',
+                  }}>
+                    {p.name}
+                  </p>
+                  <p style={{ fontSize: 11, color: '#8B7355', margin: '0 0 4px' }}>{p.size}</p>
+                  {p.rating > 0 && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>
+                      <span style={{ color: '#C8A96E', fontSize: 11 }}>★★★★★</span>
+                      <span style={{ fontSize: 10, color: '#8B7355' }}>
+                        {p.rating} ({p.reviews.toLocaleString()})
+                      </span>
+                    </div>
+                  )}
+                  <p style={{
+                    fontSize: 13, fontWeight: 700, color: '#2C1F14', margin: '0 0 10px',
+                  }}>
+                    {p.price}
+                  </p>
+                  <button
+                    onClick={() => window.open(p.url, '_blank')}
+                    style={{
+                      width: '100%', height: 36,
+                      background: '#4A3728', color: 'white',
+                      fontSize: 10, fontWeight: 600,
+                      letterSpacing: '0.04em', border: 'none',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    ΠΡΟΣΘΗΚΗ ΣΤΟ ΚΑΛΑΘΙ
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* SECTION 9 — Full routine */}
+      <div style={{ background: '#2C1F14', padding: '24px 16px', margin: '0 -16px' }}>
+        <p style={{
+          fontSize: 10, fontWeight: 600, letterSpacing: '0.1em',
+          color: '#C8A96E', textTransform: 'uppercase', margin: '0 0 4px',
+        }}>
+          Η ΟΛΟΚΛΗΡΩΜΕΝΗ ΣΑΣ ΡΟΥΤΙΝΑ
+        </p>
+        <h2 style={{
+          fontSize: 18, fontWeight: 700, color: 'white',
+          textTransform: 'uppercase', margin: '0 0 6px', letterSpacing: '0.01em',
+          lineHeight: 1.2,
+        }}>
+          {crossSellMap[activeTab].routine.title}
         </h2>
-        <p style={{ fontSize: 13, color: '#2C1F14', lineHeight: 1.5, margin: 0 }}>
-          Ανακαλύψτε την ιδανική εξατομικευμένη ρουτίνα περιποίησης, βασισμένη στον τύπο δέρματός σας και τα αποτελέσματα της ανάλυσής σας!
+        <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', margin: '0 0 16px', lineHeight: 1.5 }}>
+          Τρία προϊόντα σχεδιασμένα να λειτουργούν μαζί. Αποτελέσματα που κανένα μεμονωμένο προϊόν δεν μπορεί να δώσει.
         </p>
 
         <div style={{
           display: 'flex',
           gap: 12,
-          marginTop: 16,
           overflowX: 'auto',
-          paddingBottom: 8,
+          paddingBottom: 4,
           scrollbarWidth: 'none',
           WebkitOverflowScrolling: 'touch',
-        } as React.CSSProperties}>
-          {routineProducts.map((rp) => (
-            <div key={rp.tab} style={{ width: 160, flexShrink: 0, background: 'white', border: '0.5px solid #DDD8D0', position: 'relative' }}>
-              <button
-                style={{ position: 'absolute', top: 8, right: 8, background: 'none', border: 'none', padding: 0, cursor: 'pointer', zIndex: 1 }}
-                aria-label="Αποθήκευση"
-              >
-                <Heart size={18} color="#2C1F14" strokeWidth={1.5} />
-              </button>
-              <img
-                src={rp.image}
-                alt={rp.name}
-                style={{
-                  width: '100%',
-                  height: 180,
-                  objectFit: 'cover',
-                  objectPosition: 'center center',
-                  display: 'block',
-                }}
-              />
-              <p style={{ fontSize: 12, fontWeight: 700, color: '#2C1F14', padding: '8px 8px 4px', margin: 0, textTransform: 'uppercase', lineHeight: 1.3 }}>
-                {rp.name}
-              </p>
-              <p style={{ fontSize: 11, color: '#8B7355', padding: '0 8px', margin: 0 }}>{rp.size}</p>
-              <p style={{ fontSize: 13, fontWeight: 500, color: '#2C1F14', padding: '4px 8px', margin: 0 }}>{rp.price}</p>
-              <button
-                onClick={() => window.open(rp.url, '_blank')}
-                style={{
-                  width: 'calc(100% - 16px)',
-                  margin: '0 8px 8px',
-                  height: 36,
-                  border: '1px solid #4A3728',
-                  background: 'white',
-                  color: '#4A3728',
-                  fontSize: 11,
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}
-              >
-                ΠΡΟΣΘΗΚΗ ΣΤΟ ΚΑΛΑΘΙ
-              </button>
-            </div>
-          ))}
+        }}>
+          {crossSellMap[activeTab].routine.products.map((key) => {
+            const p = crossSellProducts[key];
+            return (
+              <div key={key} style={{
+                width: 180, flexShrink: 0,
+                background: 'rgba(255,255,255,0.06)',
+                border: '0.5px solid rgba(255,255,255,0.15)',
+              }}>
+                <img
+                  src={p.image}
+                  alt={p.name}
+                  style={{ width: '100%', height: 180, objectFit: 'cover', display: 'block' }}
+                />
+                <div style={{ padding: '10px 10px 12px' }}>
+                  <p style={{
+                    fontSize: 12, fontWeight: 700, color: 'white',
+                    margin: '0 0 2px', textTransform: 'uppercase',
+                  }}>
+                    {p.name}
+                  </p>
+                  <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', margin: '0 0 4px' }}>
+                    {p.size}
+                  </p>
+                  <p style={{ fontSize: 13, fontWeight: 700, color: '#C8A96E', margin: '0 0 10px' }}>
+                    {p.price}
+                  </p>
+                  <button
+                    onClick={() => window.open(p.url, '_blank')}
+                    style={{
+                      width: '100%', height: 36,
+                      background: 'transparent',
+                      border: '1px solid #C8A96E',
+                      color: '#C8A96E',
+                      fontSize: 10, fontWeight: 600,
+                      letterSpacing: '0.04em',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    ΠΡΟΣΘΗΚΗ ΣΤΟ ΚΑΛΑΘΙ
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* SECTION 9 — Save your results / lead capture */}
+      {/* SECTION 10 — Save your results / lead capture */}
       <div style={{ padding: '24px 16px', background: '#FAF8F5' }}>
+        <p style={{
+          fontSize: 13, color: '#8B7355', lineHeight: 1.6,
+          margin: '0 0 20px', fontStyle: 'italic', textAlign: 'center',
+        }}>
+          Τα αποτελέσματα της ανάλυσής σας παραμένουν εδώ. Αποθηκεύστε τα και
+          επιστρέψτε όποτε είστε έτοιμη.
+        </p>
         <h2 style={{ fontSize: 18, fontWeight: 700, color: '#2C1F14', textTransform: 'uppercase', margin: '0 0 8px', letterSpacing: '0.01em' }}>
           ΑΠΟΘΗΚΕΥΣΤΕ ΤΑ ΑΠΟΤΕΛΕΣΜΑΤΑ ΣΑΣ
         </h2>
