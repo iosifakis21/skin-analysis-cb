@@ -1392,8 +1392,28 @@ function Screen4({ onCapture, onClose }: { onCapture: (photoDataUrl: string) => 
 
 const tabOrder: TabKey[] = ['pores', 'dark_spots', 'dehydration', 'dark_circles', 'wrinkles'];
 
-const STRONG_POINT_THRESHOLD = 30;
-const FOCUS_AREA_THRESHOLD = 70;
+const tabCopy: Record<TabKey, { intro: string; boldWord: string }> = {
+  pores: {
+    intro: 'Μπορείτε να στοχεύσετε και να βελτιώσετε την εμφάνιση των',
+    boldWord: 'πόρων',
+  },
+  wrinkles: {
+    intro: 'Μπορείτε να στοχεύσετε και να βελτιώσετε την εμφάνιση των',
+    boldWord: 'ρυτίδων',
+  },
+  dark_circles: {
+    intro: 'Μπορείτε να στοχεύσετε και να βελτιώσετε την εμφάνιση των',
+    boldWord: 'μαύρων κύκλων',
+  },
+  dehydration: {
+    intro: 'Μπορείτε να στοχεύσετε και να βελτιώσετε την εμφάνιση της',
+    boldWord: 'αφυδάτωσης',
+  },
+  dark_spots: {
+    intro: 'Μπορείτε να στοχεύσετε και να βελτιώσετε την εμφάνιση των',
+    boldWord: 'κηλίδων',
+  },
+};
 
 // suppress unused warning — mockResults scores could drive UI in future
 void mockResults.pores;
@@ -1587,11 +1607,6 @@ function Screen5({
   };
 
   const product = productData[activeTab];
-  const currentScore = analysisScores ? (analysisScores[activeTab as keyof Pick<AnalysisScores, TabKey>] as number) : 0;
-  const tabLabel = tabLabels[activeTab];
-  const isFocusArea = currentScore >= FOCUS_AREA_THRESHOLD;
-  const isStrongPoint = currentScore <= STRONG_POINT_THRESHOLD;
-  const showBanner = isFocusArea || isStrongPoint;
 
   return (
     <div style={{ background: '#FAF8F5', minHeight: '100dvh', padding: '0 16px', boxSizing: 'border-box' }}>
@@ -1779,30 +1794,11 @@ function Screen5({
         )}
       </div>
 
-      {/* SECTION 5 — Focus/Strength label (threshold-based) */}
-      {showBanner && (
-        <div style={{
-          width: 'calc(100% + 32px)',
-          padding: '10px 16px',
-          textAlign: 'center',
-          fontSize: 11,
-          fontWeight: 600,
-          letterSpacing: '0.06em',
-          background: isFocusArea ? '#fce8ed' : '#e8f0fc',
-          color: '#4A3728',
-          boxSizing: 'border-box',
-          display: 'block',
-          margin: '0 -16px',
-        } as React.CSSProperties}>
-          {isFocusArea
-            ? `${tabLabel.toUpperCase()} ΕΙΝΑΙ Η ΠΕΡΙΟΧΗ ΕΣΤΙΑΣΗΣ ΣΑΣ`
-            : `${tabLabel.toUpperCase()} ΕΙΝΑΙ ΤΟ ΔΥΝΑΤΟ ΣΑΣ ΣΗΜΕΙΟ`}
-        </div>
-      )}
-
       {/* SECTION 6 — Copy text */}
-      <p style={{ fontSize: 14, color: '#2C1F14', lineHeight: 1.6, padding: '16px 0 8px', margin: 0 }}>
-        Μπορείτε να στοχεύσετε και να βελτιώσετε την εμφάνιση των <strong>{tabLabel.toLowerCase()}</strong> με την παρακάτω άμεση λύση αναζωογόνησης δέρματος!
+      <p style={{ fontSize: 15, color: '#2C1F14', lineHeight: 1.5, margin: '0 0 16px', padding: '16px 0 0' }}>
+        {tabCopy[activeTab].intro}{' '}
+        <strong>{tabCopy[activeTab].boldWord}</strong>
+        {' '}με την παρακάτω άμεση λύση αναζωογόνησης δέρματος!
       </p>
 
       {/* SECTION 7 — Product card */}
