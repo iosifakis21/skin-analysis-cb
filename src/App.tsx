@@ -72,18 +72,18 @@ const productData: Record<TabKey, ProductEntry> = {
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVC1qHYI82soUS7c3ADruwWEFRV014KZtp26OmQ',
   },
   dehydration: {
-    name: 'BBLISE',
+    name: 'MASTIQUE',
     size: '50ml',
     price: '25€',
     rating: 4.8,
-    reviews: 1530,
+    reviews: 234,
     benefits: [
-      'Προσφέρει φυσική κάλυψη και ομοιόμορφο τόνο στην επιδερμίδα',
-      'Ενυδατώνει βαθιά και χαρίζει δροσιά που διαρκεί όλη μέρα',
-      'Μειώνει την όψη των ρυτίδων και προσφέρει ορατή σύσφιξη',
+      'Αναπλάθει με μαστιχέλαιο και βούτυρο καριτέ',
+      'Σφίγγει τους πόρους άμεσα',
+      'Ενυδατώνει εις βάθος',
     ],
-    url: 'https://constantinebeauty.gr/products/bblise-cream-with-adjustable-coverage',
-    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCn8IOPIcWG1zXHYvFT9eRJtCU7SjkOWKi3qw0',
+    url: 'https://constantinebeauty.gr/products/mastic-oil-facial-rejuvenation-cream',
+    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCPkWu3fJBbHkjG4dmn6a1TFURpuQXwrOLv3iI',
   },
   dark_spots: {
     name: 'ELISHEVA',
@@ -145,19 +145,33 @@ const crossSellProducts: Record<string, ProductEntry> = {
     url: 'https://constantinebeauty.gr/products/peptiva-eye-cream',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVC1qHYI82soUS7c3ADruwWEFRV014KZtp26OmQ',
   },
-  bblise: {
-    name: 'BBLISE',
+  mastique: {
+    name: 'MASTIQUE',
     size: '50ml',
     price: '25€',
-    rating: 0,
-    reviews: 0,
+    rating: 4.8,
+    reviews: 234,
     benefits: [
-      'Προσφέρει φυσική κάλυψη και ομοιόμορφο τόνο στην επιδερμίδα',
-      'Ενυδατώνει βαθιά και χαρίζει δροσιά που διαρκεί όλη μέρα',
-      'Μειώνει την όψη των ρυτίδων και προσφέρει ορατή σύσφιξη',
+      'Αναπλάθει με μαστιχέλαιο και βούτυρο καριτέ',
+      'Σφίγγει τους πόρους άμεσα',
+      'Ενυδατώνει εις βάθος',
     ],
-    url: 'https://constantinebeauty.gr/products/bblise-cream-with-adjustable-coverage',
-    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCn8IOPIcWG1zXHYvFT9eRJtCU7SjkOWKi3qw0',
+    url: 'https://constantinebeauty.gr/products/mastic-oil-facial-rejuvenation-cream',
+    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCPkWu3fJBbHkjG4dmn6a1TFURpuQXwrOLv3iI',
+  },
+  lineova: {
+    name: 'LINEOVA',
+    size: '50ml',
+    price: '29€',
+    rating: 4.8,
+    reviews: 1532,
+    benefits: [
+      'Επαναφορά της ορισμένης γραμμής γνάθου που θυμάσαι',
+      'Ορατή ανύψωση του περιγράμματος που έχει κατεβεί',
+      'Σφίξιμο του χαλαρού δέρματος στη γνάθο',
+    ],
+    url: 'https://constantinebeauty.gr/products/lineova-facial-contour-cream',
+    image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCKmTX2i0oJiaIxVRUYmetTzqA29y7w8CObGg1',
   },
   elisheva: {
     name: 'ELISHEVA',
@@ -190,27 +204,24 @@ const crossSellProducts: Record<string, ProductEntry> = {
 };
 
 type CrossSellEntry = {
-  complement: string;
   carousel: { key: string; why: string }[];
   routine: { title: string; products: string[] };
 };
 
 const crossSellMap: Record<TabKey, CrossSellEntry> = {
   pores: {
-    complement: 'Για τα σημάδια που αφήνει η ακμή',
     carousel: [
-      { key: 'elisheva', why: 'Για τα σημάδια που αφήνει η ακμή' },
-      { key: 'hydranea', why: 'Επισκευάζει τον φραγμό μετά τη θεραπεία' },
+      { key: 'marionova', why: 'Για τις ρυτίδες μαριονέτας που εμφανίζονται με τα χρόνια' },
+      { key: 'lineova',   why: 'Σφίγγει τη γνάθο που χαλαρώνει παράλληλα με τους πόρους' },
     ],
     routine: {
-      title: 'Ολοκληρωμένη Καθαρή Επιδερμίδα',
-      products: ['aether', 'elisheva', 'hydranea'],
+      title: 'Ολοκληρωμένη Ανανέωση και Σύσφιξη',
+      products: ['aether', 'marionova', 'lineova'],
     },
   },
   wrinkles: {
-    complement: 'Γιατί η γήρανση δεν σταματά στα μάτια',
     carousel: [
-      { key: 'peptiva', why: 'Γιατί η γήρανση δεν σταματά στα μάτια' },
+      { key: 'peptiva',   why: 'Γιατί η γήρανση δεν σταματά στα μάτια' },
       { key: 'marionova', why: 'Για τις ρυτίδες μαριονέτας που βαθαίνουν με τα χρόνια' },
     ],
     routine: {
@@ -219,7 +230,6 @@ const crossSellMap: Record<TabKey, CrossSellEntry> = {
     },
   },
   dark_circles: {
-    complement: 'Η αντιγήρανση του προσώπου ολοκληρώνει τη φροντίδα',
     carousel: [
       { key: 'hydranea', why: 'Η αντιγήρανση του προσώπου ολοκληρώνει τη φροντίδα' },
       { key: 'elisheva', why: 'Σκιά στα μάτια και κηλίδες συχνά πάνε μαζί' },
@@ -230,25 +240,23 @@ const crossSellMap: Record<TabKey, CrossSellEntry> = {
     },
   },
   dehydration: {
-    complement: 'Η βαθιά θεραπεία κάτω από την κάλυψη',
     carousel: [
       { key: 'hydranea', why: 'Η βαθιά θεραπεία κάτω από την κάλυψη' },
-      { key: 'peptiva', why: 'Η αφυδάτωση φαίνεται πρώτα γύρω από τα μάτια' },
+      { key: 'peptiva',  why: 'Η αφυδάτωση φαίνεται πρώτα γύρω από τα μάτια' },
     ],
     routine: {
       title: 'Ολοκληρωμένη Ενυδάτωση και Αντιγήρανση',
-      products: ['bblise', 'hydranea', 'peptiva'],
+      products: ['mastique', 'hydranea', 'peptiva'],
     },
   },
   dark_spots: {
-    complement: 'Κηλίδες και γήρανση πάνε πάντα μαζί',
     carousel: [
-      { key: 'hydranea', why: 'Κηλίδες και γήρανση πάνε πάντα μαζί' },
       { key: 'marionova', why: 'Για τις γραμμές στην περιστοματική ζώνη' },
+      { key: 'lineova',   why: 'Αποκαθιστά το περίγραμμα ενώ η Elisheva φωτίζει τον τόνο' },
     ],
     routine: {
-      title: 'Ολοκληρωμένη Λαμπερή Επιδερμίδα',
-      products: ['elisheva', 'hydranea', 'marionova'],
+      title: 'Λαμπερό Πρόσωπο και Ορισμένο Περίγραμμα',
+      products: ['elisheva', 'marionova', 'lineova'],
     },
   },
 };
@@ -257,7 +265,7 @@ const tabLabels: Record<TabKey, string> = {
   pores: 'Πόροι',
   wrinkles: 'Ρυτίδες',
   dark_circles: 'Μαύροι Κύκλοι',
-  dehydration: 'Αφυδάτωση',
+  dehydration: 'Ενυδάτωση',
   dark_spots: 'Κηλίδες',
 };
 
