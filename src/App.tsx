@@ -1795,7 +1795,7 @@ function Screen5({
       </div>
 
       {/* SECTION 6 — Copy text */}
-      <p style={{ fontSize: 15, color: '#2C1F14', lineHeight: 1.6, margin: '0 0 16px' }}>
+      <p style={{ fontSize: 15, color: '#2C1F14', lineHeight: 1.6, margin: '12px 0 12px' }}>
         {tabCopy[activeTab].intro}{' '}
         <strong>{tabCopy[activeTab].boldWord}</strong>
         {' '}με την παρακάτω λύση αναζωογόνησης δέρματος.
