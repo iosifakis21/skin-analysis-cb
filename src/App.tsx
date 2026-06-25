@@ -1534,8 +1534,8 @@ function Screen5({
               position: 'absolute', top: 0, left: 0,
               width: '100%', height: '100%',
               objectFit: 'cover', objectPosition: 'center center',
-              pointerEvents: 'none', opacity: 0.8,
-              filter: maskFilters[activeTab],
+              pointerEvents: 'none', opacity: 0.85,
+              filter: maskFilters[activeTab] ?? 'none',
             }}
           />
         )}
