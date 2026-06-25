@@ -1932,7 +1932,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex justify-center" style={{ background: '#DDD8D0' }}>
+    <div className="flex justify-center" style={{ minHeight: '100dvh', background: '#FAF8F5' }}>
       <div
         id="YMK-module"
         style={{
