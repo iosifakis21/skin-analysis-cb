@@ -275,7 +275,7 @@ const crossSellMap: Record<TabKey, CrossSellEntry> = {
       { key: 'peptiva', why: 'Για φωτεινό βλέμμα που συμπληρώνει το λαμπερό πρόσωπο' },
     ],
     routine: {
-      title: 'Λαμπερο Προσωπο Ορισμενο Περιγραμμα και Φωτεινο Βλεμμα',
+      title: 'Λαμπερο Προσωπο με Καλοσχηματισμενο Περιγραμμα και Φωτεινο Βλεμμα',
       products: ['elisheva', 'lineova', 'peptiva'],
     },
   },
