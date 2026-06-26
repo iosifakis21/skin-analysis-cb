@@ -1373,6 +1373,14 @@ const tabCopy: Record<TabKey, { intro: string; boldWord: string }> = {
   },
 };
 
+const unlockButtonText: Record<TabKey, string> = {
+  pores:        'ΞΕΚΛΕΙΔΩΣΤΕ ΕΞΕΙΔΙΚΕΥΜΕΝΕΣ ΣΥΜΒΟΥΛΕΣ ΓΙΑ ΤΟΥΣ ΠΟΡΟΥΣ',
+  wrinkles:     'ΞΕΚΛΕΙΔΩΣΤΕ ΕΞΕΙΔΙΚΕΥΜΕΝΕΣ ΣΥΜΒΟΥΛΕΣ ΓΙΑ ΤΙΣ ΡΥΤΙΔΕΣ',
+  dark_circles: 'ΞΕΚΛΕΙΔΩΣΤΕ ΕΞΕΙΔΙΚΕΥΜΕΝΕΣ ΣΥΜΒΟΥΛΕΣ ΓΙΑ ΤΟΥΣ ΜΑΥΡΟΥΣ ΚΥΚΛΟΥΣ',
+  dehydration:  'ΞΕΚΛΕΙΔΩΣΤΕ ΕΞΕΙΔΙΚΕΥΜΕΝΕΣ ΣΥΜΒΟΥΛΕΣ ΓΙΑ ΤΗΝ ΕΝΥΔΑΤΩΣΗ',
+  dark_spots:   'ΞΕΚΛΕΙΔΩΣΤΕ ΕΞΕΙΔΙΚΕΥΜΕΝΕΣ ΣΥΜΒΟΥΛΕΣ ΓΙΑ ΤΙΣ ΚΗΛΙΔΕΣ',
+};
+
 // suppress unused warning — mockResults scores could drive UI in future
 void mockResults.pores;
 void mockResults.wrinkles;
@@ -1875,7 +1883,7 @@ function Screen5({
             cursor: 'pointer',
           }}
         >
-          ΞΕΚΛΕΙΔΩΣΤΕ ΕΞΕΙΔΙΚΕΥΜΕΝΕΣ ΣΥΜΒΟΥΛΕΣ ΓΙΑ {tabLabels[activeTab].toUpperCase()}
+          {unlockButtonText[activeTab]}
         </button>
       </div>
 
