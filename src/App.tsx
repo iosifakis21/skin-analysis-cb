@@ -1147,7 +1147,7 @@ function CountdownOverlay({ count }: { count: number }) {
 }
 
 function Screen4({ onCapture, onClose }: { onCapture: (photoDataUrl: string) => void; onClose: () => void }) {
-  const [phase, setPhase] = useState<'intro' | 'loading' | 'active' | 'error'>('intro');
+  const [phase, setPhase] = useState<'loading' | 'active' | 'error'>('loading');
   const [errorMsg, setErrorMsg] = useState('');
   const [countdown, setCountdown] = useState<number | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -1191,6 +1191,11 @@ function Screen4({ onCapture, onClose }: { onCapture: (photoDataUrl: string) => 
       clearCountdown();
     };
   }, [stopCamera, clearCountdown]);
+
+  useEffect(() => {
+    startCamera();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const capturePhoto = useCallback(() => {
     if (capturedRef.current) return;
@@ -1252,53 +1257,6 @@ function Screen4({ onCapture, onClose }: { onCapture: (photoDataUrl: string) => 
     stopCamera();
     onClose();
   };
-
-  // INTRO SCREEN
-  if (phase === 'intro') {
-    return (
-      <div style={{
-        position: 'relative', display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
-        minHeight: '100dvh', background: '#1A1A1A', padding: '0 16px',
-        flex: 1,
-      }}>
-        <button onClick={handleClose} style={{
-          position: 'absolute', top: 16, right: 16, zIndex: 10,
-          background: 'none', border: 'none', cursor: 'pointer',
-          width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <X size={22} color="white" />
-        </button>
-
-        <div style={{ textAlign: 'center', marginBottom: 48 }}>
-          <p style={{
-            fontSize: 22, fontWeight: 700, color: 'white', letterSpacing: '0.12em',
-            marginBottom: 32,
-          }}>
-            CONSTANTINE
-          </p>
-          <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)', lineHeight: 1.7, marginBottom: 8 }}>
-            Τοποθετήστε το πρόσωπό σας μέσα στο πλαίσιο
-          </p>
-          <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)', lineHeight: 1.7, marginBottom: 8 }}>
-            Βεβαιωθείτε ότι έχετε καλό φωτισμό
-          </p>
-          <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.85)', lineHeight: 1.7 }}>
-            Αφαιρέστε τα γυαλιά σας αν φοράτε
-          </p>
-        </div>
-
-        <button onClick={startCamera} style={{
-          width: 'calc(100% - 32px)', maxWidth: 398, height: 52,
-          background: '#4A3728', color: 'white', border: 'none',
-          borderRadius: 4, fontSize: 14, fontWeight: 700, letterSpacing: '0.08em',
-          cursor: 'pointer',
-        }}>
-          ΕΝΑΡΞΗ ΣΑΡΩΣΗΣ
-        </button>
-      </div>
-    );
-  }
 
   // ERROR SCREEN
   if (phase === 'error') {
