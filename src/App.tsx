@@ -1897,7 +1897,7 @@ function Screen5({
             Τι Λειτουργει Μαζι
           </h2>
           <p style={{ fontSize: 12, color: '#8B7355', margin: '4px 0 0', lineHeight: 1.4 }}>
-            {'Τα προϊόντα που συμπληρώνουν τη δράση του ' + productData[activeTab].name + ' για ολοκληρωμένο αποτέλεσμα'}
+            {'Τα προϊόντα που συμπληρώνουν τη δράση της ' + productData[activeTab].name + ' για ολοκληρωμένο αποτέλεσμα'}
           </p>
         </div>
 
