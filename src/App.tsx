@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { ChevronLeft, Heart, X } from 'lucide-react';
 import { FaceDetector, FilesetResolver } from '@mediapipe/tasks-vision';
+import { useShopifyCart } from './hooks/useShopifyCart';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -1424,6 +1425,7 @@ function Screen5({
   ageGroup: AgeGroup;
   onReset: () => void;
 }) {
+  const { cartCount, isLoading, lastAdded, addToCart, openCheckout, clearLastAdded } = useShopifyCart();
   const [analysisLoading, setAnalysisLoading] = useState(true);
   const [loadingMessage, setLoadingMessage] = useState('Αναλύουμε το δέρμα σας...');
   const [analysisScores, setAnalysisScores] = useState<AnalysisScores | null>(null);
@@ -1833,7 +1835,8 @@ function Screen5({
           <p style={{ fontSize: 18, fontWeight: 700, color: '#2C1F14', margin: '8px 0' }}>{product.price}</p>
 
           <button
-            onClick={() => window.open(product.url, '_blank')}
+            onClick={() => addToCart(product.variantId, product.name)}
+            disabled={isLoading}
             style={{
               width: '100%',
               height: 50,
@@ -1846,6 +1849,7 @@ function Screen5({
               border: 'none',
               marginBottom: 16,
               cursor: 'pointer',
+              opacity: isLoading ? 0.6 : 1,
             }}
           >
             ΠΡΟΣΘΗΚΗ ΣΤΟ ΚΑΛΑΘΙ
@@ -1964,13 +1968,15 @@ function Screen5({
                     {p.price}
                   </p>
                   <button
-                    onClick={() => window.open(p.url, '_blank')}
+                    onClick={() => addToCart(p.variantId, p.name)}
+                    disabled={isLoading}
                     style={{
                       width: '100%', height: 36,
                       background: '#4A3728', color: 'white',
                       fontSize: 10, fontWeight: 600,
                       letterSpacing: '0.04em', border: 'none',
                       cursor: 'pointer',
+                      opacity: isLoading ? 0.6 : 1,
                     }}
                   >
                     ΠΡΟΣΘΗΚΗ ΣΤΟ ΚΑΛΑΘΙ
@@ -2036,7 +2042,8 @@ function Screen5({
                     {p.price}
                   </p>
                   <button
-                    onClick={() => window.open(p.url, '_blank')}
+                    onClick={() => addToCart(p.variantId, p.name)}
+                    disabled={isLoading}
                     style={{
                       width: '100%', height: 36,
                       background: 'transparent',
@@ -2045,6 +2052,7 @@ function Screen5({
                       fontSize: 10, fontWeight: 600,
                       letterSpacing: '0.04em',
                       cursor: 'pointer',
+                      opacity: isLoading ? 0.6 : 1,
                     }}
                   >
                     ΠΡΟΣΘΗΚΗ ΣΤΟ ΚΑΛΑΘΙ
