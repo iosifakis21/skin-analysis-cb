@@ -2173,20 +2173,33 @@ function Screen5({
         <button
           onClick={openCart}
           style={{
-            position: 'fixed', bottom: 24, right: 16, zIndex: 190,
-            background: '#2C1F14', color: 'white',
-            border: 'none', borderRadius: '50%',
-            width: 52, height: 52, cursor: 'pointer',
-            display: 'flex', alignItems: 'center',
-            justifyContent: 'center', flexDirection: 'column',
-            gap: 1, boxShadow: '0 2px 12px rgba(0,0,0,0.25)',
+            position: 'fixed',
+            bottom: 24,
+            right: 16,
+            zIndex: 190,
+            background: '#2C1F14',
+            border: 'none',
+            borderRadius: '50%',
+            width: 52,
+            height: 52,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            gap: 2,
+            boxShadow: '0 2px 12px rgba(0,0,0,0.25)',
           }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
-              <line x1="3" y1="6" x2="21" y2="6"/>
-              <path d="M16 10a4 4 0 01-8 0"/>
-            </svg>
-          <span style={{ fontSize: 11, fontWeight: 700, lineHeight: 1 }}>{cartCount}</span>
+          <img
+            src="https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCJbn9uwKGx1nU4ZhBOrfoReuSv60d8Nsi2bEk"
+            alt="cart"
+            style={{ width: 22, height: 22, filter: 'brightness(0) invert(1)' }}
+          />
+          {cartCount > 0 && (
+            <span style={{ fontSize: 11, fontWeight: 700, color: 'white', lineHeight: 1 }}>
+              {cartCount}
+            </span>
+          )}
         </button>
       )}
 
