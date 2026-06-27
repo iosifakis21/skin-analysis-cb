@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { ChevronLeft, Heart, X } from 'lucide-react';
 import { FaceDetector, FilesetResolver } from '@mediapipe/tasks-vision';
 import { useShopifyCart } from './hooks/useShopifyCart';
+import CartDrawer from './components/CartDrawer';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -1425,7 +1426,7 @@ function Screen5({
   ageGroup: AgeGroup;
   onReset: () => void;
 }) {
-  const { cartCount, isLoading, lastAdded, addToCart, openCheckout, clearLastAdded } = useShopifyCart();
+  const { cartCount, isLoading, lastAdded, addToCart, openCheckout, clearLastAdded, cartLines, cartTotal, isCartOpen, openCart, closeCart, updateQuantity, removeLine } = useShopifyCart();
   const [analysisLoading, setAnalysisLoading] = useState(true);
   const [loadingMessage, setLoadingMessage] = useState('Αναλύουμε το δέρμα σας...');
   const [analysisScores, setAnalysisScores] = useState<AnalysisScores | null>(null);
@@ -2170,7 +2171,7 @@ function Screen5({
 
       {cartCount > 0 && (
         <button
-          onClick={openCheckout}
+          onClick={openCart}
           style={{
             position: 'fixed', bottom: 24, right: 16, zIndex: 190,
             background: '#2C1F14', color: 'white',
@@ -2185,6 +2186,16 @@ function Screen5({
         </button>
       )}
 
+      <CartDrawer
+        isOpen={isCartOpen}
+        onClose={closeCart}
+        cartLines={cartLines}
+        cartTotal={cartTotal}
+        isLoading={isLoading}
+        onUpdateQuantity={updateQuantity}
+        onRemoveLine={removeLine}
+        onCheckout={() => { closeCart(); openCheckout(); }}
+      />
     </div>
   );
 }
