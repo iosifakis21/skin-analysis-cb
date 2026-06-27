@@ -6,7 +6,7 @@ const API_URL = `https://${DOMAIN}/api/2024-01/graphql.json`;
 
 const CART_KEY = 'cb_cart_id';
 
-type CartLine = {
+export type CartLine = {
   id: string;
   quantity: number;
   linePrice: string;
