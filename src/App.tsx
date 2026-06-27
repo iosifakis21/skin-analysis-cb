@@ -1454,6 +1454,14 @@ function Screen5({
     return () => { document.head.removeChild(style); };
   }, []);
 
+  // Auto-dismiss the "added to cart" toast after 4 seconds
+  useEffect(() => {
+    if (lastAdded) {
+      const t = setTimeout(clearLastAdded, 4000);
+      return () => clearTimeout(t);
+    }
+  }, [lastAdded, clearLastAdded]);
+
   const analyzePhoto = useCallback(async () => {
     setAnalysisLoading(true);
     setAnalysisError(null);
@@ -2077,7 +2085,7 @@ function Screen5({
           ΑΠΟΘΗΚΕΥΣΤΕ ΤΑ ΑΠΟΤΕΛΕΣΜΑΤΑ ΣΑΣ
         </h2>
         <p style={{ fontSize: 13, color: '#2C1F14', lineHeight: 1.5, margin: '0 0 16px' }}>
-          Αφήστε τα στοιχεία σας για να λάβετε τα αποτελέσματα της ανάλυσής σας και εξατομικευμένες προτάσεις περιποίησης στο email σας.
+          Αφήστε τα στοιχεία σας για να λάβετε τα αποτελέσματα της ανάλυσής σας και ��ξατομικευμένες προτάσεις περιποίησης στο email σας.
         </p>
 
         {leadSubmitted ? (
@@ -2129,6 +2137,63 @@ function Screen5({
       </div>
 
       </>)}
+
+      {/* TOAST — shown when a product was just added to the cart */}
+      {lastAdded && (
+        <div style={{
+          position: 'fixed', bottom: 80, left: 16, right: 16,
+          zIndex: 200, pointerEvents: 'auto',
+        }}>
+          <div style={{
+            background: '#2C1F14', color: 'white',
+            padding: '14px 16px', display: 'flex',
+            alignItems: 'center', justifyContent: 'space-between',
+            gap: 12,
+          }}>
+            <div>
+              <p style={{ fontSize: 13, fontWeight: 600, margin: 0 }}>
+                ✓ Προστέθηκε στο καλάθι
+              </p>
+              <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', margin: '2px 0 0' }}>
+                {lastAdded}
+              </p>
+            </div>
+            <button
+              onClick={openCheckout}
+              style={{
+                background: '#C8A96E', color: '#2C1F14',
+                border: 'none', padding: '8px 14px',
+                fontSize: 12, fontWeight: 700,
+                letterSpacing: '0.04em', cursor: 'pointer',
+                whiteSpace: 'nowrap', flexShrink: 0,
+              }}
+            >
+              CHECKOUT →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* FLOATING CART COUNTER — shown when there are items in the cart */}
+      {cartCount > 0 && (
+        <button
+          onClick={openCheckout}
+          style={{
+            position: 'fixed', bottom: 24, right: 16, zIndex: 190,
+            background: '#2C1F14', color: 'white',
+            border: 'none', borderRadius: '50%',
+            width: 52, height: 52, cursor: 'pointer',
+            display: 'flex', alignItems: 'center',
+            justifyContent: 'center', flexDirection: 'column',
+            gap: 1, boxShadow: '0 2px 12px rgba(0,0,0,0.25)',
+          }}
+        >
+          <span style={{ fontSize: 18 }}>🛒</span>
+          <span style={{ fontSize: 11, fontWeight: 700, lineHeight: 1 }}>
+            {cartCount}
+          </span>
+        </button>
+      )}
 
     </div>
   );
