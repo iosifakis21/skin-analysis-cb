@@ -2236,33 +2236,44 @@ function Screen5({
             alignItems: 'center',
             justifyContent: 'center',
             boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
+            padding: 0,
           }}>
-          <div style={{ position: 'relative', width: 28, height: 28 }}>
+          <div style={{
+            position: 'relative',
+            width: 28,
+            height: 28,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
             <img
               src="https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCJbn9uwKGx1nU4ZhBOrfoReuSv60d8Nsi2bEk"
               alt="cart"
-              style={{ width: 28, height: 28 }}
+              style={{
+                width: 28,
+                height: 28,
+                display: 'block',
+              }}
             />
-            {cartCount > 0 && (
-              <div style={{
-                position: 'absolute',
-                top: -8,
-                right: -8,
-                background: '#C8A96E',
-                color: 'white',
-                borderRadius: '50%',
-                width: 18,
-                height: 18,
-                fontSize: 11,
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                lineHeight: 1,
-              }}>
-                {cartCount}
-              </div>
-            )}
+            <div style={{
+              position: 'absolute',
+              top: -10,
+              right: -10,
+              background: '#C8A96E',
+              color: 'white',
+              borderRadius: '50%',
+              width: 20,
+              height: 20,
+              fontSize: 11,
+              fontWeight: 700,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              lineHeight: 1,
+              pointerEvents: 'none',
+            }}>
+              {cartCount}
+            </div>
           </div>
         </button>
       )}
