@@ -29,7 +29,7 @@ const mockResults = {
 type ProductEntry = {
   name: string; size: string; price: string; rating: number; reviews: number;
   benefits: string[]; url: string; image: string; complement?: string;
-  imagePosition?: string; variantId: string;
+  imagePosition?: string; variantId: string; discountHint?: string;
 };
 
 const productData: Record<TabKey, ProductEntry> = {
@@ -48,6 +48,7 @@ const productData: Record<TabKey, ProductEntry> = {
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVC8jzi4JuBuzK2lRNEWasfkOcy4p6g0TMqDV1Z',
     imagePosition: 'center 85%',
     variantId: '54239315001690',
+    discountHint: '2 τεμ. 49€  ·  3 τεμ. 69€',
   },
   wrinkles: {
     name: 'HYDRANEA',
@@ -63,6 +64,7 @@ const productData: Record<TabKey, ProductEntry> = {
     url: 'https://constantinebeauty.gr/products/hydranea-anti-aging-face-cream-with-stem-cells-niacinamide',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCAAS7KbYqQC0y6sv4a7w29ofDt1LmekcVdrhE',
     variantId: '52124278686042',
+    discountHint: '2 τεμ. 45€  ·  3 τεμ. 65€',
   },
   dark_circles: {
     name: 'PEPTIVA',
@@ -78,6 +80,7 @@ const productData: Record<TabKey, ProductEntry> = {
     url: 'https://constantinebeauty.gr/products/peptiva-eye-cream',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVC1qHYI82soUS7c3ADruwWEFRV014KZtp26OmQ',
     variantId: '52202158948698',
+    discountHint: '2 τεμ. 45€  ·  3 τεμ. 65€',
   },
   dehydration: {
     name: 'MASTIQUE',
@@ -93,6 +96,7 @@ const productData: Record<TabKey, ProductEntry> = {
     url: 'https://constantinebeauty.gr/products/mastic-oil-facial-rejuvenation-cream',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCPkWu3fJBbHkjG4dmn6a1TFURpuQXwrOLv3iI',
     variantId: '49620044644698',
+    discountHint: '2 τεμ. 45€  ·  3 τεμ. 65€',
   },
   dark_spots: {
     name: 'ELISHEVA',
@@ -109,6 +113,7 @@ const productData: Record<TabKey, ProductEntry> = {
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCIaaLfQpIiabJK94o2U0QOXxNtR8HSkZghnBD',
     imagePosition: 'center 85%',
     variantId: '54239321424218',
+    discountHint: '2 τεμ. 49€  ·  3 τεμ. 69€',
   },
 };
 
@@ -129,6 +134,7 @@ const crossSellProducts: Record<string, ProductEntry> = {
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVC8jzi4JuBuzK2lRNEWasfkOcy4p6g0TMqDV1Z',
     imagePosition: 'center 85%',
     variantId: '54239315001690',
+    discountHint: '2 τεμ. 49€  ·  3 τεμ. 69€',
   },
   hydranea: {
     name: 'HYDRANEA',
@@ -144,6 +150,7 @@ const crossSellProducts: Record<string, ProductEntry> = {
     url: 'https://constantinebeauty.gr/products/hydranea-anti-aging-face-cream-with-stem-cells-niacinamide',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCAAS7KbYqQC0y6sv4a7w29ofDt1LmekcVdrhE',
     variantId: '52124278686042',
+    discountHint: '2 τεμ. 45€  ·  3 τεμ. 65€',
   },
   peptiva: {
     name: 'PEPTIVA',
@@ -159,6 +166,7 @@ const crossSellProducts: Record<string, ProductEntry> = {
     url: 'https://constantinebeauty.gr/products/peptiva-eye-cream',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVC1qHYI82soUS7c3ADruwWEFRV014KZtp26OmQ',
     variantId: '52202158948698',
+    discountHint: '2 τεμ. 45€  ·  3 τεμ. 65€',
   },
   mastique: {
     name: 'MASTIQUE',
@@ -174,6 +182,7 @@ const crossSellProducts: Record<string, ProductEntry> = {
     url: 'https://constantinebeauty.gr/products/mastic-oil-facial-rejuvenation-cream',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCPkWu3fJBbHkjG4dmn6a1TFURpuQXwrOLv3iI',
     variantId: '49620044644698',
+    discountHint: '2 τεμ. 45€  ·  3 τεμ. 65€',
   },
   lineova: {
     name: 'LINEOVA',
@@ -189,6 +198,7 @@ const crossSellProducts: Record<string, ProductEntry> = {
     url: 'https://constantinebeauty.gr/products/lineova-facial-contour-cream',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCKmTX2i0oJiaIxVRUYmetTzqA29y7w8CObGg1',
     variantId: '53786629243226',
+    discountHint: '2 τεμ. 49€  ·  3 τεμ. 69€',
   },
   bblise: {
     name: 'BBLISE',
@@ -204,6 +214,7 @@ const crossSellProducts: Record<string, ProductEntry> = {
     url: 'https://constantinebeauty.gr/products/bblise-cream-with-adjustable-coverage',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCn8IOPIcWG1zXHYvFT9eRJtCU7SjkOWKi3qw0',
     variantId: '52352010617178',
+    discountHint: '2 τεμ. 45€  ·  3 τεμ. 65€',
   },
   elisheva: {
     name: 'ELISHEVA',
@@ -220,6 +231,7 @@ const crossSellProducts: Record<string, ProductEntry> = {
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCIaaLfQpIiabJK94o2U0QOXxNtR8HSkZghnBD',
     imagePosition: 'center 85%',
     variantId: '54239321424218',
+    discountHint: '2 τεμ. 49€  ·  3 τεμ. 69€',
   },
   marionova: {
     name: 'MARIONOVA',
@@ -235,6 +247,7 @@ const crossSellProducts: Record<string, ProductEntry> = {
     url: 'https://constantinebeauty.gr/products/marionova-creamy-serum-for-marionette-lines',
     image: 'https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCS5xQCl9tPvsbX7QlkrMNx1nUou8R05HCqfm3',
     variantId: '52794674315610',
+    discountHint: '2 τεμ. 49€  ·  3 τεμ. 69€',
   },
 };
 
@@ -1862,6 +1875,18 @@ function Screen5({
           >
             ΠΡΟΣΘΗΚΗ ΣΤΟ ΚΑΛΑΘΙ
           </button>
+          {product.discountHint && (
+            <p style={{
+              fontSize: 11,
+              color: '#8B7355',
+              textAlign: 'center',
+              margin: '6px 0 0',
+              letterSpacing: '0.03em',
+              fontStyle: 'italic',
+            }}>
+              {product.discountHint}
+            </p>
+          )}
 
           <p style={{
             fontSize: 11,
@@ -1989,6 +2014,18 @@ function Screen5({
                   >
                     ΠΡΟΣΘΗΚΗ ΣΤΟ ΚΑΛΑΘΙ
                   </button>
+                  {p.discountHint && (
+                    <p style={{
+                      fontSize: 11,
+                      color: '#8B7355',
+                      textAlign: 'center',
+                      margin: '6px 0 0',
+                      letterSpacing: '0.03em',
+                      fontStyle: 'italic',
+                    }}>
+                      {p.discountHint}
+                    </p>
+                  )}
                 </div>
               </div>
             );
@@ -2065,6 +2102,18 @@ function Screen5({
                   >
                     ΠΡΟΣΘΗΚΗ ΣΤΟ ΚΑΛΑΘΙ
                   </button>
+                  {p.discountHint && (
+                    <p style={{
+                      fontSize: 11,
+                      color: 'rgba(255,255,255,0.5)',
+                      textAlign: 'center',
+                      margin: '6px 0 0',
+                      letterSpacing: '0.03em',
+                      fontStyle: 'italic',
+                    }}>
+                      {p.discountHint}
+                    </p>
+                  )}
                 </div>
               </div>
             );
