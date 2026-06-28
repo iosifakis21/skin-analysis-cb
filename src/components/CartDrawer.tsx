@@ -1,35 +1,43 @@
 import type { CartLine } from '../hooks/useShopifyCart';
 
-const DISCOUNT_MAP: Record<string, { qty2: number; qty3: number }> = {
-  '54239315001690': { qty2: 9,  qty3: 18 },
-  '54239321424218': { qty2: 9,  qty3: 18 },
-  '53786629243226': { qty2: 9,  qty3: 18 },
-  '52794674315610': { qty2: 9,  qty3: 18 },
-  '52124278686042': { qty2: 5,  qty3: 10 },
-  '52202158948698': { qty2: 5,  qty3: 10 },
-  '52352010617178': { qty2: 5,  qty3: 10 },
-  '49620044644698': { qty2: 5,  qty3: 10 },
+const DISCOUNT_MAP: Record<string, {
+  compareAt1: number;
+  compareAt2: number;
+  compareAt3: number;
+  price2: number;
+  price3: number;
+}> = {
+  '54239315001690': { compareAt1: 50,  compareAt2: 100, compareAt3: 150, price2: 49, price3: 69 },
+  '54239321424218': { compareAt1: 50,  compareAt2: 100, compareAt3: 150, price2: 49, price3: 69 },
+  '53786629243226': { compareAt1: 60,  compareAt2: 120, compareAt3: 180, price2: 49, price3: 69 },
+  '52794674315610': { compareAt1: 60,  compareAt2: 120, compareAt3: 180, price2: 49, price3: 69 },
+  '52124278686042': { compareAt1: 60,  compareAt2: 120, compareAt3: 180, price2: 45, price3: 65 },
+  '52202158948698': { compareAt1: 60,  compareAt2: 120, compareAt3: 180, price2: 45, price3: 65 },
+  '52352010617178': { compareAt1: 60,  compareAt2: 120, compareAt3: 180, price2: 45, price3: 65 },
+  '49620044644698': { compareAt1: 60,  compareAt2: 120, compareAt3: 180, price2: 45, price3: 65 },
 };
 
 function getDiscountHint(variantId: string, quantity: number): { text: string; color: string } | null {
   const numericId = variantId.replace('gid://shopify/ProductVariant/', '');
-  const discount = DISCOUNT_MAP[numericId];
-  if (!discount) return null;
+  const d = DISCOUNT_MAP[numericId];
+  if (!d) return null;
+  const saving2 = d.compareAt2 - d.price2;
+  const saving3 = d.compareAt3 - d.price3;
   if (quantity >= 3) {
     return {
-      text: `✓ Εξοικονομείτε €${discount.qty3} — Μέγιστη έκπτωση!`,
+      text: `✓ Εξοικονομείτε €${saving3} — Μέγιστη έκπτωση!`,
       color: '#3E7C4A',
     };
   }
   if (quantity === 2) {
     return {
-      text: `✓ Εξοικονομείτε €${discount.qty2} — Προσθέστε 1 ακόμα για €${discount.qty3} έκπτωση`,
+      text: `✓ Εξοικονομείτε €${saving2} — Προσθέστε 1 ακόμα για €${saving3} έκπτωση`,
       color: '#3E7C4A',
     };
   }
   if (quantity === 1) {
     return {
-      text: `Προσθέστε 1 ακόμα και εξοικονομήστε €${discount.qty2}`,
+      text: `Προσθέστε 1 ακόμα και εξοικονομήστε €${saving2}`,
       color: '#C8A96E',
     };
   }
@@ -262,3 +270,6 @@ export default function CartDrawer({
     </>
   );
 }
+
+
+export default CartDrawer
