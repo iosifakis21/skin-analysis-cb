@@ -65,6 +65,21 @@ export default function CartDrawer({
   onRemoveLine,
   onCheckout,
 }: CartDrawerProps) {
+  function removeAccents(str: string): string {
+    return str
+      .replace(/ά/g, 'α').replace(/Ά/g, 'Α')
+      .replace(/έ/g, 'ε').replace(/Έ/g, 'Ε')
+      .replace(/ή/g, 'η').replace(/Ή/g, 'Η')
+      .replace(/ί/g, 'ι').replace(/Ί/g, 'Ι')
+      .replace(/ό/g, 'ο').replace(/Ό/g, 'Ο')
+      .replace(/ύ/g, 'υ').replace(/Ύ/g, 'Υ')
+      .replace(/ώ/g, 'ω').replace(/Ώ/g, 'Ω')
+      .replace(/ϊ/g, 'ι').replace(/Ϊ/g, 'Ι')
+      .replace(/ΐ/g, 'ι')
+      .replace(/ϋ/g, 'υ').replace(/Ϋ/g, 'Υ')
+      .replace(/ΰ/g, 'υ');
+  }
+
   return (
     <>
       {/* OVERLAY */}
@@ -171,7 +186,7 @@ export default function CartDrawer({
                     margin: '0 0 4px',
                     textTransform: 'uppercase',
                   }}>
-                    {line.productName}
+                    {removeAccents(line.productName).toUpperCase()}
                   </p>
                   <p style={{ fontSize: 12, color: '#8B7355', margin: '0 0 8px' }}>
                     €{Math.round(parseFloat(line.linePrice))}
