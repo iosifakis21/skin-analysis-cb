@@ -2226,29 +2226,44 @@ function Screen5({
             bottom: 24,
             right: 16,
             zIndex: 190,
-            background: '#2C1F14',
+            background: 'white',
             border: 'none',
             borderRadius: '50%',
-            width: 52,
-            height: 52,
+            width: 56,
+            height: 56,
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            flexDirection: 'column',
-            gap: 2,
-            boxShadow: '0 2px 12px rgba(0,0,0,0.25)',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
           }}>
-          <img
-            src="https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCJbn9uwKGx1nU4ZhBOrfoReuSv60d8Nsi2bEk"
-            alt="cart"
-            style={{ width: 22, height: 22, filter: 'brightness(0) invert(1)' }}
-          />
-          {cartCount > 0 && (
-            <span style={{ fontSize: 11, fontWeight: 700, color: 'white', lineHeight: 1 }}>
-              {cartCount}
-            </span>
-          )}
+          <div style={{ position: 'relative', width: 28, height: 28 }}>
+            <img
+              src="https://6q04fcrv8e.ufs.sh/f/oRxwcUqHTaVCJbn9uwKGx1nU4ZhBOrfoReuSv60d8Nsi2bEk"
+              alt="cart"
+              style={{ width: 28, height: 28 }}
+            />
+            {cartCount > 0 && (
+              <div style={{
+                position: 'absolute',
+                top: -8,
+                right: -8,
+                background: '#C8A96E',
+                color: 'white',
+                borderRadius: '50%',
+                width: 18,
+                height: 18,
+                fontSize: 11,
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                lineHeight: 1,
+              }}>
+                {cartCount}
+              </div>
+            )}
+          </div>
         </button>
       )}
 
