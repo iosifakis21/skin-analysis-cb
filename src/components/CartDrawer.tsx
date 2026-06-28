@@ -1,5 +1,41 @@
 import type { CartLine } from '../hooks/useShopifyCart';
 
+const DISCOUNT_MAP: Record<string, { qty2: number; qty3: number }> = {
+  '54239315001690': { qty2: 9,  qty3: 18 },
+  '54239321424218': { qty2: 9,  qty3: 18 },
+  '53786629243226': { qty2: 9,  qty3: 18 },
+  '52794674315610': { qty2: 9,  qty3: 18 },
+  '52124278686042': { qty2: 5,  qty3: 10 },
+  '52202158948698': { qty2: 5,  qty3: 10 },
+  '52352010617178': { qty2: 5,  qty3: 10 },
+  '49620044644698': { qty2: 5,  qty3: 10 },
+};
+
+function getDiscountHint(variantId: string, quantity: number): { text: string; color: string } | null {
+  const numericId = variantId.replace('gid://shopify/ProductVariant/', '');
+  const discount = DISCOUNT_MAP[numericId];
+  if (!discount) return null;
+  if (quantity >= 3) {
+    return {
+      text: `✓ Εξοικονομείτε €${discount.qty3} — Μέγιστη έκπτωση!`,
+      color: '#3E7C4A',
+    };
+  }
+  if (quantity === 2) {
+    return {
+      text: `✓ Εξοικονομείτε €${discount.qty2} — Προσθέστε 1 ακόμα για €${discount.qty3} έκπτωση`,
+      color: '#3E7C4A',
+    };
+  }
+  if (quantity === 1) {
+    return {
+      text: `Προσθέστε 1 ακόμα και εξοικονομήστε €${discount.qty2}`,
+      color: '#C8A96E',
+    };
+  }
+  return null;
+}
+
 interface CartDrawerProps {
   isOpen: boolean;
   onClose: () => void;
@@ -168,6 +204,20 @@ export default function CartDrawer({
                       🗑
                     </button>
                   </div>
+                  {(() => {
+                    const hint = getDiscountHint(line.variantId, line.quantity);
+                    return hint ? (
+                      <p style={{
+                        fontSize: 11,
+                        color: hint.color,
+                        margin: '6px 0 0',
+                        fontStyle: 'italic',
+                        letterSpacing: '0.02em',
+                      }}>
+                        {hint.text}
+                      </p>
+                    ) : null;
+                  })()}
                 </div>
               </div>
             ))
